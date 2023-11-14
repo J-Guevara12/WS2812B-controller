@@ -1,0 +1,239 @@
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    padding: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid #fafa0d;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #3f1571;
+
+}
+
+h1 {
+    color: #fafa0d;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: red;
+    margin-bottom: 20px;
+}
+
+
+/* Estilo para los inputs de tipo text y password */
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #FF0000 ;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+/* Cambia el color de fondo cuando se enfocan */
+input[type="text"]:focus,
+input[type="password"]:focus {
+  background-color: #f0f0f0;
+  border-color: #077fff;
+}
+
+
+
+
+
+/* Estilo base para los botones */
+button {
+  padding: 10px 10px;
+  background-color: #1E8449; /* Color de fondo */
+  color: #fff;
+  border-color:#0B5345  ;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 15px;
+  cursor: progress;
+}
+
+
+
+button:hover {
+  background-color: #196F3D ; 
+  color: white;
+}
+
+button:active{
+  background-color: #145A32 ;
+}
+
+
+.buttons input[type="button"]{
+  background-color: #fa0000;
+  color: white;
+  padding: 10px 10px;
+  border-color:#1B4F72;
+  border-radius: 15px;
+}
+
+
+/* Estilos para el elemento "select" */
+select {
+  padding: 10px; 
+  border: 1px solid   #003AFF ; 
+  border-radius: 5px; 
+  background-color: #fff; 
+  color: #333; 
+  font-size: 16px; 
+  width: 100%; 
+  max-width: 300px; 
+  cursor: pointer; 
+}
+
+
+select option {
+  background-color: #fff;
+  color: #333; 
+  padding: 10px; 
+}
+
+
+select:focus {
+  outline: none; 
+  box-shadow: 0 0 5px #200EEA ; 
+}
+
+
+
+
+.box {
+    width: 300px;
+    padding: 20px;
+    margin: 10px;   
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    text-align: center; 
+    
+}
+
+.circle {
+    width: 100px; 
+    height: 100px;
+    border-radius: 50%;
+    border-color: #BDC3C7 ;
+    border-style: solid;
+    margin: 10px;
+}
+
+#led-circle {
+    background-color: red; 
+}
+
+.arrow-button {
+    padding: 10px 20px;
+    font-size: 20px;
+    background-color: #fa0000;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+
+/* Estilo de los sliders */
+.slider-container {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .slider-container label {
+    width: 20px;
+    text-align: right;
+    margin-right: 10px;
+  }
+  
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    outline: none;
+    opacity: 1;
+    transition: opacity 1s;
+    background: linear-gradient(to right, #000000 0%, #ff0000 100%);
+  }
+  
+  /* Cambia el color de fondo para el slider rojo (R) */
+  #redSlider {
+    background: linear-gradient(to right, #000000 0%, #ff0000 100%);
+  }
+  
+  /* Cambia el color de fondo para el slider verde (G) */
+  #greenSlider {
+    background: linear-gradient(to right, #000000 0%, #00ff00 100%);
+  }
+  
+  /* Cambia el color de fondo para el slider azul (B) */
+  #blueSlider {
+    background: linear-gradient(to right, #000000 0%, #0000ff 100%);
+      
+}
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #000000;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: cell;
+  }
+
+
+  .input-container h6 {
+    flex: 1;
+    margin-right: 10px;
+}
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+

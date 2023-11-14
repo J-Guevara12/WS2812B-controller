@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>App ESP32</title>
+    <link rel="stylesheet" type="text/css" href="app.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Proyecto ESP32</h1>
+
+        <div class="Credentilas">
+
+            <h1> Credentials </h1>
+            <input type="text" id="ssdi-input" placeholder="SSDI" >
+            <input type="password" id="value-password" placeholder="Password">
+            <button id="send-credentials">Send</button>
+        
+        </div>
+
+        <div id="OTA-firmaware-Update">
+          <h1>ESP32 Firmware Update</h1>
+            <input type="file" id="selected_file" accept=".bin" style="display: none;" onchange="getFileInfo()" />
+            <div class="buttons">
+              <input type="button" value="Select File" onclick="document.getElementById('selected_file').click();" />
+              <input type="button" value="Update Firmware" onclick="updateFirmware()" />
+            </div>
+            <h4 id="file_info"></h4>	
+            <h4 id="ota_update_status"></h4>
+          </div>
+        
+
+      
+        <!-- Ingresar valor y enviar -->
+
+        <div class="box">
+          <h>Temperature:</h>
+          <div class="circle" id="led-circle"></div>
+          <p id="temperature-data">0 °C</p>
+
+          <h4>Select the temperature range to modify</h4>
+          <select name="miSelect" id="miSelect" onchange="showSelectedValue()">
+            <option value="">--Select Range-- </option>
+            <option value="temperature 1">Range Temperature 1</option>
+            <option value="temperature 2">Range Temperature 2</option>
+            <option value="temperature 3">Range Temperature 3</option>
+          </select>
+
+          <div id="result"></div>
+
+
+          <h2>Led's Brightness</h2>
+          <input type="text" id="value-min-range" placeholder="Minimum Value">
+          <span id="min-range-value">Min: </span>
+          
+          <p id="value-range"></p>
+          
+          <input type="text" id="value-max-range" placeholder="Maximum Value">
+          <span id="max-range-value">Max: </span>
+            
+
+
+
+            <div class="slider-container">
+              <label for="redSlider">R:</label>
+              <input type="range" min="0" max="255" value="128" class="slider" id="redSlider">
+              <p id="red-slider-value">128</p> <!-- Elemento para mostrar el valor -->
+            </div>
+          
+            <div class="slider-container">
+              <label for="greenSlider">G:</label>
+              <input type="range" min="0" max="255" value="128" class="slider" id="greenSlider">
+              <p id="green-slider-value">128</p> <!-- Elemento para mostrar el valor -->
+            </div>
+          
+            <div class="slider-container">
+              <label for="blueSlider">B:</label>
+              <input type="range" min="0" max="255" value="128" class="slider" id="blueSlider">
+              <p id="blue-slider-value">128</p> <!-- Elemento para mostrar el valor -->
+            </div>
+
+            <button id="value-range-temperature">Send Values</button>
+          </div>
+
+          
+    </div> 
+    <script src="app.js"></script>
+</body>
+</html>
+
