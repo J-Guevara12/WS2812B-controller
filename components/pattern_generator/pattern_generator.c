@@ -2,6 +2,10 @@
 #include "freertos/projdefs.h"
 #include "led_strip.h"
 #include "portmacro.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_timer.h"
+
 
 #include <math.h>
 
@@ -142,13 +146,25 @@ void sweep(int *i, int *delta) {
 
     int space = (NUMBER_OF_LEDS - pulse_length * number_of_pulses) / (number_of_pulses);
 
+    // Obtiene el tiempo actual en microsegundos
+    uint32_t currentTime = esp_timer_get_time();
+
+    // Declara la variable 'lastUpdate'
+    static uint32_t lastUpdate = 0;
+
+    // Calcula la diferencia de tiempo desde la última actualización
+    uint32_t elapsedTime = currentTime - lastUpdate;
+
+    // Actualiza la posición según el tiempo transcurrido
+    *i += (*delta) * (elapsedTime / 10000);  // Divide por 10,000 para convertir de microsegundos a milisegundos
+
     //  Se Calcula la posición del barrido en función del tiempo que pasa
-    int position = millis() / 10;
+    static int position = 0;
 
     for (int j = 0; j < number_of_pulses; j++) {
-        //Itera en cada puslo en el varrido
+        // Itera sobre cada pulso
         for (int k = 0; k < pulse_length; k++) {
-            // Calcula la posición del barrido para el Led actual
+            // Calcula la posición del barrido para el LED actual
             int sweep_position = (*i + k + (space + pulse_length) * j) % NUMBER_OF_LEDS;
 
             // Calcula la intensidad en función de la posición relativa al barrido
@@ -159,18 +175,18 @@ void sweep(int *i, int *delta) {
         }
     }
 
+    // Envía el arreglo de LEDs habilitados a la cola
+    xQueueSend(enabled_leds_queue, &enabled_leds, (TickType_t) 10);
+
     // Actualiza la posición para el próximo ciclo
-    (*i) += (*delta);
     if (*i == 0) {
         *delta = 1;
     }
-    (*i) %= NUMBER_OF_LEDS;
+    *i %= NUMBER_OF_LEDS;
 
-    // Envía el arreglo de LEDs habilitados a la cola
-    xQueueSend(enabled_leds_queue, &enabled_leds, (TickType_t) 10);
+    // Actualiza el tiempo de la última actualización
+    lastUpdate = currentTime;
 }
-
-
 
 
 
@@ -197,10 +213,24 @@ void rainbow(int *i) {
             // Calcula un valor de color basado en la posición
             uint8_t hue = (rainbow_position * 255) / NUMBER_OF_LEDS;
 
-            // Convierte el valor de color desde el espacio HSL a RGB
-            uint32_t color = led_strip_hsl_to_rgb(hue, 255, 128);
+            // Calcula los componentes RGB del color del arco iris
+            uint8_t red = 0, green = 0, blue = 0;
+
+            if (hue < 85) {
+                red = hue * 3;
+                green = 255 - hue * 3;
+            } else if (hue < 170) {
+                hue -= 85;
+                red = 255 - hue * 3;
+                blue = hue * 3;
+            } else {
+                hue -= 170;
+                green = hue * 3;
+                blue = 255 - hue * 3;
+            }
 
             // Establece el color en el LED actual
+            uint32_t color = (red << 16) | (green << 8) | blue;
             enabled_leds[rainbow_position] = true;
         }
     }
@@ -235,10 +265,10 @@ void random_colors(int *i) {
             int position = (*i + k + (space + pulse_length) * j) % NUMBER_OF_LEDS;
 
             // Genera valores de color aleatorios
-            uint8_t red = random(256);
-            uint8_t green = random(256);
-            uint8_t blue = random(256);
-
+            uint8_t red = (uint8_t)rand() % 256;
+            uint8_t green = (uint8_t)rand() % 256;
+            uint8_t blue = (uint8_t)rand() % 256;
+            
             // Establece el color en el LED actual
             enabled_leds[position] = true;
         }
@@ -256,7 +286,8 @@ void random_colors(int *i) {
 
 
 
-void sin_wave(int *i) {
+
+void sin_wave(int *i, int *delta) {
     bool enabled_leds[NUMBER_OF_LEDS] = {[0 ... NUMBER_OF_LEDS - 1] = false};
     int pulse_length = 0;
     int number_of_pulses = 0;
@@ -270,27 +301,40 @@ void sin_wave(int *i) {
 
     int space = (NUMBER_OF_LEDS - pulse_length * number_of_pulses) / (number_of_pulses);
 
-    // Calcula la posición de la onda sinusoidal en función del tiempo
-    int position = millis() / 10;
+    // Obtiene el tiempo actual en microsegundos
+    uint32_t currentTime = esp_timer_get_time();
 
+    // Declara la variable 'lastUpdate'
+    static uint32_t lastUpdate = 0;
+
+    // Calcula la diferencia de tiempo desde la última actualización
+    uint32_t elapsedTime = currentTime - lastUpdate;
+
+    // Actualiza la posición según el tiempo transcurrido
+    *i += (*delta) * (elapsedTime / 1000);  // Divide por 1000 para convertir de microsegundos a milisegundos
+
+    // Calcula la posición de la onda sinusoidal para cada LED
     for (int j = 0; j < number_of_pulses; j++) {
-        // Itera sobre cada pulso
         for (int k = 0; k < pulse_length; k++) {
-            // Calcula la posición de la onda sinusoidal para el LED actual
-            int wave_position = (*i + k + (space + pulse_length) * j) % NUMBER_OF_LEDS;
+            int position = (*i + k + (space + pulse_length) * j) % NUMBER_OF_LEDS;
 
-            // Calcula la intensidad en función de la posición relativa a la onda sinusoidal
-            uint8_t intensity = (sin((wave_position + position) * 0.1) + 1.0) * 127;
+            // Calcula la intensidad en función de la posición de la onda sinusoidal
+            uint8_t intensity = (uint8_t)(128 + 127 * sin(position * 2 * M_PI / NUMBER_OF_LEDS));
 
             // Establece el color en el LED actual
-            enabled_leds[wave_position] = true;
+            enabled_leds[position] = true;
         }
     }
 
-    // Actualiza la posición para el próximo ciclo
-    (*i)++;
-    (*i) %= NUMBER_OF_LEDS;
-
     // Envía el arreglo de LEDs habilitados a la cola
     xQueueSend(enabled_leds_queue, &enabled_leds, (TickType_t) 10);
+
+    // Actualiza la posición para el próximo ciclo
+    if (*i == 0) {
+        *delta = 1;
+    }
+    *i %= NUMBER_OF_LEDS;
+
+    // Actualiza el tiempo de la última actualización
+    lastUpdate = currentTime;
 }
