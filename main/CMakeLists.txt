@@ -6,6 +6,8 @@ idf_component_register(SRCS
         "../components/uart/uart.c" 
         "../components/led_strip/led_strip.c" 
         "../components/led_strip_encoder/led_strip_encoder.c" 
+        "../components/pattern_generator/pattern_generator.c" 
+        "../components/color_manager/color_manager.c" 
     INCLUDE_DIRS 
         "." 
         "../components/wifi_app"
@@ -15,4 +17,6 @@ idf_component_register(SRCS
         "../components/tasks_common"
         "../components/led_strip"
         "../components/led_strip_encoder"
+        "../components/pattern_generator"
+        "../components/color_manager"
                     EMBED_FILES ../webpage/app.css ../webpage/app.js ../webpage/favicon.ico ../webpage/index.html)
