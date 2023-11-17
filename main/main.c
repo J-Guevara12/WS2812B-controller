@@ -17,6 +17,9 @@
 #include "pattern_generator.h"
 #include "color_manager.h"
 
+#include "acs712.h"
+
+
 //-------------------------------------------------------------------------------
 //              DECLARACION DE MEDIR TEMPERATURA
 void rainbow(int *current_step);
@@ -29,6 +32,12 @@ QueueHandle_t led_strip_queue;
 
 void app_main(void)
 {
+
+
+
+
+    float current = acs712_read_current();
+    print ("current: %2f  Am")
     // Inicializa las colas / variables compartidas
     enabled_leds_queue = xQueueCreate(1, NUMBER_OF_LEDS * sizeof(bool));
     current_pattern_queue = xQueueCreate(1, sizeof(int));
@@ -43,7 +52,7 @@ void app_main(void)
     pattern_generator_init();
 
     // Agrega el patrón rainbow a la cola de patrones 
-    int rainbow_pattern = 4;  
+    int rainbow_pattern = 4;    
     xQueueSend(current_pattern_queue, &rainbow_pattern, (TickType_t)10);
 
     xTaskCreatePinnedToCore(send_data_task, "Send Data", 2048, NULL, 3, NULL, 0);
