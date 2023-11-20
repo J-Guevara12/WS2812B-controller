@@ -12,7 +12,7 @@
 #define ACS712_V_REF      1100  //  valor de referencia (mV)
 
 
-float acs712_read_current();
+float acs712_read_current_voltage();
 
 #endif   
 
