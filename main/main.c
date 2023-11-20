@@ -30,24 +30,13 @@ QueueHandle_t enabled_leds_queue;
 QueueHandle_t current_pattern_queue;
 QueueHandle_t led_strip_queue;
 
-void app_main(void)
-{
-
-
-
-
+void app_main(void){
     CurrentVoltageValues result = acs712_read_current_voltage();
-     float current = result.current;
+    float current = result.current;
     float voltage = result.voltage;
-
-
-    
-
+   
+    ESP_LOGI(TAG, "current: %2f  Am", current);
     // Inicializa las colas / variables compartidas
-    enabled_leds_queue = xQueueCreate(1, NUMBER_OF_LEDS * sizeof(bool));
-    current_pattern_queue = xQueueCreate(1, sizeof(int));
-    led_strip_queue = xQueueCreate(1, sizeof(uint8_t));  
-
     if (enabled_leds_queue == NULL || current_pattern_queue == NULL || led_strip_queue == NULL) {
         ESP_LOGE(TAG, "Error creating queues");
         return;
@@ -55,10 +44,6 @@ void app_main(void)
 
     led_strip_init();
     pattern_generator_init();
-
-    // Agrega el patrón rainbow a la cola de patrones 
-    int rainbow_pattern = 4;    
-    xQueueSend(current_pattern_queue, &rainbow_pattern, (TickType_t)10);
 
     xTaskCreatePinnedToCore(send_data_task, "Send Data", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(pattern_generator_task, "Pattern Generator", 2048, NULL, 3, NULL, 0);

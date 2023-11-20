@@ -21,7 +21,7 @@ void color_manager_task(){
         xQueueReceive(enabled_leds_queue, &enabled_leds, (TickType_t) 10);
         for(int n = 0; n < NUMBER_OF_LEDS; n++){
             if(enabled_leds[n]){
-                set_color(n, 255, 0, 0);
+                set_color(n, 255, 0, 255);
             }
             else{
                 set_color(n, 0, 0, 0);
