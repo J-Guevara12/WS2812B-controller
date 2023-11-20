@@ -36,8 +36,13 @@ void app_main(void)
 
 
 
-    float current = acs712_read_current();
-    print ("current: %2f  Am")
+    CurrentVoltageValues result = acs712_read_current_voltage();
+     float current = result.current;
+    float voltage = result.voltage;
+
+
+    
+
     // Inicializa las colas / variables compartidas
     enabled_leds_queue = xQueueCreate(1, NUMBER_OF_LEDS * sizeof(bool));
     current_pattern_queue = xQueueCreate(1, sizeof(int));
