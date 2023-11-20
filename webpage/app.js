@@ -1,9 +1,5 @@
-// Elemenetos del HTML
-const temperatureData = document.getElementById('temperature-data');
-const ledCircle = document.getElementById('led-circle');
-const setTimeButton = document.getElementById('set-time');
-const valueInput = document.getElementById('value-input');
-const sendBrihtnessButton = document.getElementById('send-value-brightness');
+
+
 var sendCredentialsButton = document.getElementById("send-credentials");
 var ssdiInput =document.getElementById("ssdi-input");
 var passwordInput = document.getElementById("value-password");
@@ -91,109 +87,9 @@ function getUpdateStatus() {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-function showSelectedValue() {
-    const selectElement = document.getElementById("miSelect");
-    const selectedValue = selectElement.value;
-    const resultElement = document.getElementById("result");
-    resultElement.textContent = "Range " + selectedValue;
-}
 
 
 
-////////////////////////////////////////////////////////////////
-
-let range1MinValue = 0;
-let range1MaxValue = 30;
-
-let range2MinValue = 31;
-let range2MaxValue = 50;
-
-let range3MinValue = 51;
-let range3MaxValue = 70;
-
-let R1_RGB = {
-    "red": 255,
-    "green": 0,
-    "blue": 0,
-}
-
-let R2_RGB = {
-    "red": 0,
-    "green": 255,
-    "blue": 0,
-}
-
-let R3_RGB = {
-    "red": 0,
-    "green": 0,
-    "blue": 255,
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
-function showSelectedValue() {
-    const selectElement = document.getElementById("miSelect");
-    const selectedValue = selectElement.value;
-    const resultElement = document.getElementById("result");
-    resultElement.textContent = "Range " + selectedValue;
-
-    // Actualiza los valores de los sliders y  rangos  ingresados
-    if (selectedValue === "temperature 1") {
-        minRangeInput.value = range1MinValue;
-        maxRangeInput.value = range1MaxValue;
-        document.getElementById("redSlider").value = R1_RGB.red;
-        document.getElementById("greenSlider").value = R1_RGB.green;
-        document.getElementById("blueSlider").value = R1_RGB.blue;
-    } else if (selectedValue === "temperature 2") {
-        minRangeInput.value = range2MinValue;
-        maxRangeInput.value = range2MaxValue;
-        document.getElementById("redSlider").value = R2_RGB.red;
-        document.getElementById("greenSlider").value = R2_RGB.green;
-        document.getElementById("blueSlider").value = R2_RGB.blue;
-    } else if (selectedValue === "temperature 3") {
-        minRangeInput.value = range3MinValue;
-        maxRangeInput.value = range3MaxValue;
-        document.getElementById("redSlider").value = R3_RGB.red;
-        document.getElementById("greenSlider").value = R3_RGB.green;
-        document.getElementById("blueSlider").value = R3_RGB.blue;
-    }
-}
-
-const sendButton = document.getElementById("value-range-temperature");
-
-sendButton.addEventListener("click", () => {
-    const selectedValue = document.getElementById("miSelect").value;
-    const minValue = minRangeInput.value;
-    const maxValue = maxRangeInput.value;
-
-    // almacena  los valores  de cada rango
-    if (selectedValue === "temperature 1") {
-        range1MinValue = minValue;
-        range1MaxValue = maxValue;
-        R1_RGB.red = parseInt(document.getElementById("redSlider").value);
-        R1_RGB.green = parseInt(document.getElementById("greenSlider").value);
-        R1_RGB.blue = parseInt(document.getElementById("blueSlider").value);
-    } else if (selectedValue === "temperature 2") {
-        range2MinValue = minValue;
-        range2MaxValue = maxValue;
-        R2_RGB.red = parseInt(document.getElementById("redSlider").value);
-        R2_RGB.green = parseInt(document.getElementById("greenSlider").value);
-        R2_RGB.blue = parseInt(document.getElementById("blueSlider").value);
-    } else if (selectedValue === "temperature 3") {
-        range3MinValue = minValue;
-        range3MaxValue = maxValue;
-        R3_RGB.red = parseInt(document.getElementById("redSlider").value);
-        R3_RGB.green = parseInt(document.getElementById("greenSlider").value);
-        R3_RGB.blue = parseInt(document.getElementById("blueSlider").value);
-    }
-
-    minRangeValue.textContent = "Min: " + minValue;
-    maxRangeValue.textContent = "Max: " + maxValue;
-
-
-});
 
 
 
@@ -201,109 +97,127 @@ sendButton.addEventListener("click", () => {
 
 
 // Función para actualizar temperatura y color del LED
-function updateTemperatureAndLED(temperature) {
-    temperatureData.textContent = temperature + ' °C';
+function updatecurrentsensor(current) {
+    temperatureData.textContent = current + ' A';
     
-    // Cambiar el color del LED en función de la temperatura
-    if (temperature > range1MinValue && temperature < range1MaxValue) {
-        sendRGBvalues(R1_RGB)
-    } 
-    else if (temperature > range2MinValue && temperature < range2MaxValue) {
-        sendRGBvalues(R2_RGB)
-    } 
-    else if (temperature > range3MinValue && temperature < range3MaxValue){
-        sendRGBvalues(R3_RGB)
-    } 
-}
 
-
-
-async function getTemperature() {
-  const response = await fetch("api/temperature");
+async function getcurrent() {
+  const response = await fetch("api/current");
   const res = await response.json();
-  return res.temperature;
+  return res.current;
 }
 
 
 
 //  datos UART  mostrados
 setInterval(async () => {
-    const temperature = await getTemperature();
-    updateTemperatureAndLED(temperature);
-}, 100);  // Actualiza cada 5 segundos (
+    const current = await getcurrent();
+    updatecurrentsensor(current);
+}, 100);  // Actualiza cada 5 segundos 
 
 
 
-// datos del RGB
 
-document.getElementById("redSlider").oninput = function() {
-    const value = this.value;
-    const selectedValue = document.getElementById("miSelect").value;
-    if (selectedValue === "temperature 1") {
-        R1_RGB.red = parseInt(value);
-    } else if (selectedValue === "temperature 2") {
-        R2_RGB.red = parseInt(value);
-    } else if (selectedValue === "temperature 3") {
-        R2_RGB.red = parseInt(value);
-    }
-    document.getElementById("red-slider-value").textContent = value;
+///////////////////////////////////////////////////////////////////////////////////////
+// Estado del sistema
+let systemStatus = false;
+
+// Estado actual del consumo de energía
+let currentEnergyMode = {
+    "Mode 1": { "defCurrent": "", "defVoltage": "" },
+    "Mode 2": { "defCurrent": "", "defVoltage": "" },
+    "Mode 3": { "defCurrent": "", "defVoltage": "" }
 };
 
-document.getElementById("greenSlider").oninput = function() {
-    const value = this.value;
-    const selectedValue = document.getElementById("miSelect").value;
-    if (selectedValue === "temperature 1") {
-        R1_RGB.green = parseInt(value);
-    } else if (selectedValue === "temperature 2") {
-        R2_RGB.green = parseInt(value);
-    } else if (selectedValue === "temperature 3") {
-        R2_RGB.green = parseInt(value);
-    }
-    document.getElementById("green-slider-value").textContent = value;
+// Estado actual de los sliders para cada opción de Pattern
+let patternSliders = {
+    "Pattern 1": { "red": 128, "green": 128, "blue": 128 },
+    "Pattern 2": { "red": 128, "green": 128, "blue": 128 },
+    "Pattern 3": { "red": 128, "green": 128, "blue": 128 },
+    "Pattern 4": { "red": 128, "green": 128, "blue": 128 },
+    "Pattern 5": { "red": 128, "green": 128, "blue": 128 },
+    "Pattern 6": { "red": 128, "green": 128, "blue": 128 },
 };
 
+// Cambiar  estado del sistema (Encendido / Apagado)
+function toggle() {
+    systemStatus = !systemStatus;
+    document.getElementById("status").innerText = systemStatus ? "Estado: Encendido" : "Estado: Apagado";
+    document.getElementById("toggleBtn").innerText = systemStatus ? "Apagado" : "Encendido";
+}
 
-document.getElementById("blueSlider").oninput = function() {
-    const value = this.value;
-    const selectedValue = document.getElementById("miSelect").value;
-    if (selectedValue === "temperature 1") {
-        R1_RGB.blue = parseInt(value);
-    } else if (selectedValue === "temperature 2") {
-        R2_RGB.blue = parseInt(value);
-    } else if (selectedValue === "temperature 3") {
-        R2_RGB.blue = parseInt(value);
-    }
-    document.getElementById("blue-slider-value").textContent = value;
-};
+// Se camBian los valores de defCurrent y defVoltage según la opción seleccionada 
+function changeEnergyMode() {
+    const selectedMode = document.getElementById("selectModEnergy").value;
+    currentEnergyMode[selectedMode].defCurrent = document.getElementById("defCurrent").value;
+    currentEnergyMode[selectedMode].defVoltage = document.getElementById("defVoltage").value;
+}
 
+// Se  cambia los valores de los sliders según la opción seleccionada 
+function changePatternSliders() {
+    const selectedPattern = document.getElementById("selectPattern").value;
+    document.getElementById("redSlider").value = patternSliders[selectedPattern].red;
+    document.getElementById("greenSlider").value = patternSliders[selectedPattern].green;
+    document.getElementById("blueSlider").value = patternSliders[selectedPattern].blue;
+    updateSliderValues();
+}
 
+// Se actilizan los valores de los sliders
+function updateSliderValues() {
+    document.getElementById("red-slider-value").innerText = document.getElementById("redSlider").value;
+    document.getElementById("green-slider-value").innerText = document.getElementById("greenSlider").value;
+    document.getElementById("blue-slider-value").innerText = document.getElementById("blueSlider").value;
+}
 
-const minRangeInput = document.getElementById("value-min-range");
-const maxRangeInput= document.getElementById("value-max-range");
-const minRangeValue = document.getElementById("min-range-value");
-const maxRangeValue = document.getElementById("max-range-value");
-const valueRange =document.getElementById("value-range");
+// Sen envian a la api los valores del modo de energia
+async function sendEnergyModeJSON() {
+    const selectedMode = document.getElementById("selectModEnergy").value;
+    const jsonData = {
+        defCurrent: currentEnergyMode[selectedMode].defCurrent,
+        defVoltage: currentEnergyMode[selectedMode].defVoltage
+    };
 
+    const response = await fetch("api/energy-mode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(jsonData)
+    });
 
-sendButton.addEventListener("click",()=> {
-    const minValue = minRangeInput.value;
-    const maxValue = maxRangeInput.value;
-    minRangeValue.textContent="Min: "+ minValue;
-    maxRangeValue.textContent="Max: "+ maxValue;
-
-});
-
-
-
-
-// envio y solitud del  servidor
-async function sendRGBvalues(data) {
-    const response = await fetch("api/brightness",{
-    method: "POST",headers:{ "Content-Type":"application/json"},
-    body: JSON.stringify(data)});
-    if (response.ok){
-        return response.statusText
+    if (response.ok) {
+        return response.statusText;
     }
 }
 
-  
+// Funcion para enviar el valor del patron de iluminado
+async function sendPatternJSON() {
+    const selectedPattern = document.getElementById("selectPattern").value;
+    const jsonDataPattern = {
+        red: patternSliders[selectedPattern].red,
+        green: patternSliders[selectedPattern].green,
+        blue: patternSliders[selectedPattern].blue
+    };
+
+    const response = await fetch("api/pattern", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(jsonDataPattern)
+    });
+
+    if (response.ok) {
+        return response.statusText;
+    }
+}
+
+
+document.getElementById("toggleBtn").addEventListener("click", toggle);
+document.getElementById("selectModEnergy").addEventListener("change", changeEnergyMode);
+document.getElementById("defCurrent").addEventListener("input", changeEnergyMode);
+document.getElementById("defVoltage").addEventListener("input", changeEnergyMode);
+document.getElementById("selectPattern").addEventListener("change", changePatternSliders);
+document.getElementById("redSlider").addEventListener("input", updateSliderValues);
+document.getElementById("greenSlider").addEventListener("input", updateSliderValues);
+document.getElementById("blueSlider").addEventListener("input", updateSliderValues);
+document.getElementById("send-credentials").addEventListener("click", sendEnergyModeJSON);
+document.getElementById("selectPattern").addEventListener("click", sendPatternJSON);
+
+
