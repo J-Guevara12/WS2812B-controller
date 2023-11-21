@@ -34,9 +34,11 @@ QueueHandle_t main_color_queue;
 QueueHandle_t pulse_length_queue;
 QueueHandle_t background_color_queue;
 
-void app_main(void)
-{
-    float current = acs712_read_current();
+void app_main(void){
+    CurrentVoltageValues result = acs712_read_current_voltage();
+    float current = result.current;
+    float voltage = result.voltage;
+   
     ESP_LOGI(TAG, "current: %2f  Am", current);
     // Inicializa las colas / variables compartidas
 

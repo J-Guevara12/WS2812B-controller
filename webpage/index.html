@@ -65,9 +65,25 @@
         <option value="Pattern 4">rainbow</option>
         <option value="Pattern 5">Random Colors</option>
         <option value="Pattern 6">Sin Wave</option>
-        
-
       </select>
+
+      <div class="slider-container">
+        <label for="redSlider">R:</label>
+        <input type="range" min="0" max="255" value="128" class="slider" id="redSlider">
+        <p id="red-slider-value">128</p> <!-- Elemento para mostrar el valor -->
+      </div>
+    
+      <div class="slider-container">
+        <label for="greenSlider">G:</label>
+        <input type="range" min="0" max="255" value="128" class="slider" id="greenSlider">
+        <p id="green-slider-value">128</p> <!-- Elemento para mostrar el valor -->
+      </div>
+    
+      <div class="slider-container">
+        <label for="blueSlider">B:</label>
+        <input type="range" min="0" max="255" value="128" class="slider" id="blueSlider">
+        <p id="blue-slider-value">128</p> <!-- Elemento para mostrar el valor -->
+      </div>
       <br>
       <button type="button">Select</button>
     </div>
@@ -82,6 +98,8 @@
       <p>Consumption mode:</p>
       <p>Pattern: </p>
     </div>
+
+    
 
     <div id="imageBox">
       <!-- Contenido del segundo recuadro en la tercera columna -->
