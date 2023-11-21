@@ -41,17 +41,18 @@ void led_strip_init() {
     led_strip_queue = xQueueCreate(1, 3 * NUMBER_OF_LEDS * sizeof(uint8_t));
 }
 
-void set_color(int n, int R, int G, int B){
+void set_color(int n, uint8_t R, uint8_t G, uint8_t B){
     static uint8_t led_strip[3*NUMBER_OF_LEDS];
-    xQueueReceive(led_strip_queue, &led_strip, (TickType_t) 10);
+    xQueuePeek(led_strip_queue, &led_strip, (TickType_t) 10);
     led_strip[n*3 + 1] = R;
     led_strip[n*3] = G;
     led_strip[n*3 + 2] = B;
-    xQueueSend(led_strip_queue, led_strip, (TickType_t) 10);
+    xQueueOverwrite( led_strip_queue, led_strip );
 }
+
 void send_data(){
     static uint8_t led_strip[3*NUMBER_OF_LEDS];
-    xQueueReceive(led_strip_queue, &led_strip, (TickType_t) 10);
+    xQueuePeek(led_strip_queue, &led_strip, (TickType_t) 10);
     ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, &led_strip, 3*NUMBER_OF_LEDS, &tx_config));
 }
 

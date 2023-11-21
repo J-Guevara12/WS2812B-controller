@@ -14,11 +14,13 @@
 #include "driver/rmt_tx.h"
 #include <stdint.h>
 
+#include "color_manager.h"
+
 void led_strip_init();
 
 void send_data();
 void send_data_task();
 
-void set_color(int n, int R, int G, int B);
+void set_color(int n, uint8_t R, uint8_t G, uint8_t B);
 
 #endif

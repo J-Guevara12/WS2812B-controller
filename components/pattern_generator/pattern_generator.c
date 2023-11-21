@@ -9,12 +9,12 @@
 
 #include <math.h>
 
-QueueHandle_t pulse_length_queue;
 QueueHandle_t number_of_pulses_queue;
 QueueHandle_t period_ms_queue;
 
 static const char *TAG = "LED_STRIP";
 
+extern QueueHandle_t pulse_length_queue;
 extern QueueHandle_t enabled_leds_queue;
 extern QueueHandle_t current_pattern_queue;
 
@@ -30,17 +30,17 @@ void pattern_generator_init(){
     int default_period_ms = DEFAULT_PERIOD_MS;
     int default_pattern = DEFAULT_PATTERN;
 
-    xQueueSend(pulse_length_queue, &default_pulse_length, (TickType_t) 10);
-    xQueueSend(number_of_pulses_queue, &default_number_of_pulses, (TickType_t) 10);
-    xQueueSend(period_ms_queue, &default_period_ms, (TickType_t) 10);
-    xQueueSend(current_pattern_queue, &default_pattern, (TickType_t) 10);
+    xQueueOverwrite(pulse_length_queue, &default_pulse_length );
+    xQueueOverwrite(number_of_pulses_queue, &default_number_of_pulses );
+    xQueueOverwrite(period_ms_queue, &default_period_ms );
+    xQueueOverwrite(current_pattern_queue, &default_pattern );
 
     ESP_LOGI(TAG, "Pattern generator initializated!");
 }
 
 void constant(bool state){
     bool enabled_leds[NUMBER_OF_LEDS] = {[0 ... NUMBER_OF_LEDS - 1] = state};
-    xQueueSend(enabled_leds_queue, &enabled_leds, (TickType_t) 10);
+    xQueueOverwrite(enabled_leds_queue, &enabled_leds );
 }
 
 void pulses(int * i){
@@ -66,7 +66,7 @@ void pulses(int * i){
     }
     (*i)++;
     *i%=NUMBER_OF_LEDS;
-    xQueueSend(enabled_leds_queue, &enabled_leds, (TickType_t) 10);
+    xQueueOverwrite(enabled_leds_queue, &enabled_leds );
 
 }
 
@@ -99,7 +99,7 @@ void swing(int * i, int * delta){
     }
     *i += *delta;
     *i%=NUMBER_OF_LEDS;
-    xQueueSend(enabled_leds_queue, &enabled_leds, (TickType_t) 10);
+    xQueueOverwrite(enabled_leds_queue, &enabled_leds );
 
 }
 
@@ -109,7 +109,7 @@ void pattern_generator_task(){
     int current_step = 0;
     int current_pattern = 0;
     int delta = 1;
-    xQueueReceive(current_pattern_queue, &current_pattern, (TickType_t) 10);
+    xQueuePeek(current_pattern_queue, &current_pattern, (TickType_t) 10);
     float period_ms = DEFAULT_PERIOD_MS;
     while (true){
         switch(current_pattern){

@@ -28,24 +28,25 @@ static const char* TAG = "MAIN";
 
 QueueHandle_t enabled_leds_queue;
 QueueHandle_t current_pattern_queue;
+QueueHandle_t current_color_pattern_queue;
 QueueHandle_t led_strip_queue;
+QueueHandle_t main_color_queue;
+QueueHandle_t pulse_length_queue;
+QueueHandle_t background_color_queue;
 
 void app_main(void)
 {
     float current = acs712_read_current();
     ESP_LOGI(TAG, "current: %2f  Am", current);
     // Inicializa las colas / variables compartidas
-    if (enabled_leds_queue == NULL || current_pattern_queue == NULL || led_strip_queue == NULL) {
-        ESP_LOGE(TAG, "Error creating queues");
-        return;
-    }
 
     led_strip_init();
     pattern_generator_init();
+    color_manager_init();
 
     xTaskCreatePinnedToCore(send_data_task, "Send Data", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(pattern_generator_task, "Pattern Generator", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(color_manager_task, "Color Manager", 2048, NULL, 3, NULL, 0);
-    
+
     ESP_LOGI(TAG, "Task creation finished!");
 }
