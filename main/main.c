@@ -30,6 +30,7 @@ QueueHandle_t current_pattern_queue;
 QueueHandle_t current_color_pattern_queue;
 QueueHandle_t led_strip_queue;
 QueueHandle_t main_color_queue;
+QueueHandle_t secondary_color_queue;
 QueueHandle_t pulse_length_queue;
 QueueHandle_t background_color_queue;
 QueueHandle_t period_ms_queue;
@@ -55,21 +56,24 @@ void app_main(void){
     pattern_generator_init();
     color_manager_init();
 	wifi_app_start();
+    uart_init();
 
     xTaskCreatePinnedToCore(send_data_task, "Send Data", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(pattern_generator_task, "Pattern Generator", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(color_manager_task, "Color Manager", 2048, NULL, 3, NULL, 0);
+    xTaskCreatePinnedToCore(echo_task, "UART Manager", 2048, NULL, 3, NULL, 0);
 
     ESP_LOGI(TAG, "Task creation finished!");
 
-    vTaskDelay(pdMS_TO_TICKS(2000));
+    Color color1 = {0,40,40};
+    change_main_color(color1);
+    Color color2 = {40,0,40};
+    change_secondary_color(color2);
+    Color color3 = {10,10,10};
+    change_background_color(color3);
+
+    change_pattern(2);
+    change_number_of_pulses(1);
     change_pulse_length(10);
-
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    change_pulse_length(4);
-    change_number_of_pulses(3);
-
-    vTaskDelay(pdMS_TO_TICKS(2000));
-    change_change_period_ms(30.0);
-
+    change_color_pattern(2);
 }
