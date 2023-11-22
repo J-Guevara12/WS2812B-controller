@@ -1,5 +1,3 @@
-
-
 var sendCredentialsButton = document.getElementById("send-credentials");
 var ssdiInput =document.getElementById("ssdi-input");
 var passwordInput = document.getElementById("value-password");
@@ -207,8 +205,6 @@ async function sendPatternJSON() {
         return response.statusText;
     }
 }
-
-
 document.getElementById("toggleBtn").addEventListener("click", toggle);
 document.getElementById("selectModEnergy").addEventListener("change", changeEnergyMode);
 document.getElementById("defCurrent").addEventListener("input", changeEnergyMode);

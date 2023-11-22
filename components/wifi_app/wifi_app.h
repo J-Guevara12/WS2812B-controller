@@ -16,8 +16,8 @@
 typedef void (*wifi_connected_event_callback_t)(void);
 
 // WiFi application settings
-#define WIFI_STA_SSID				"JUAN_ESTEBAN"	    // STA name
-#define WIFI_STA_PASSWORD			"1002655776"			// STA password
+#define WIFI_STA_SSID				"Redmi Note 8"	    // STA name
+#define WIFI_STA_PASSWORD			"el pollo"			// STA password
 #define WIFI_AP_SSID				"ESP32_AP"			// AP name
 #define WIFI_AP_PASSWORD			"password"			// AP password
 #define WIFI_AP_CHANNEL				1					// AP channel
@@ -97,31 +97,3 @@ int8_t wifi_app_get_rssi(void);
 esp_err_t wifi_connect(char * ssid, char * password);
 
 #endif /* MAIN_WIFI_APP_H_ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
