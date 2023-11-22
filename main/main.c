@@ -22,7 +22,6 @@
 
 //-------------------------------------------------------------------------------
 //              DECLARACION DE MEDIR TEMPERATURA
-void rainbow(int *current_step);
 
 static const char* TAG = "MAIN";
 
@@ -33,11 +32,21 @@ QueueHandle_t led_strip_queue;
 QueueHandle_t main_color_queue;
 QueueHandle_t pulse_length_queue;
 QueueHandle_t background_color_queue;
+QueueHandle_t period_ms_queue;
 
 void app_main(void){
     CurrentVoltageValues result = acs712_read_current_voltage();
     float current = result.current;
     float voltage = result.voltage;
+
+    // Initialize NVS
+	esp_err_t ret = nvs_flash_init();
+	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+	{
+		ESP_ERROR_CHECK(nvs_flash_erase());
+		ret = nvs_flash_init();
+	}
+	ESP_ERROR_CHECK(ret);
    
     ESP_LOGI(TAG, "current: %2f  Am", current);
     // Inicializa las colas / variables compartidas
@@ -45,10 +54,22 @@ void app_main(void){
     led_strip_init();
     pattern_generator_init();
     color_manager_init();
+	wifi_app_start();
 
     xTaskCreatePinnedToCore(send_data_task, "Send Data", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(pattern_generator_task, "Pattern Generator", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(color_manager_task, "Color Manager", 2048, NULL, 3, NULL, 0);
 
     ESP_LOGI(TAG, "Task creation finished!");
+
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    change_pulse_length(10);
+
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    change_pulse_length(4);
+    change_number_of_pulses(3);
+
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    change_change_period_ms(30.0);
+
 }

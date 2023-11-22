@@ -10,13 +10,13 @@
 #include <math.h>
 
 QueueHandle_t number_of_pulses_queue;
-QueueHandle_t period_ms_queue;
 
 static const char *TAG = "LED_STRIP";
 
 extern QueueHandle_t pulse_length_queue;
 extern QueueHandle_t enabled_leds_queue;
 extern QueueHandle_t current_pattern_queue;
+extern QueueHandle_t period_ms_queue;
 
 void pattern_generator_init(){
     enabled_leds_queue = xQueueCreate(1, NUMBER_OF_LEDS * sizeof(bool));
@@ -27,7 +27,7 @@ void pattern_generator_init(){
 
     int default_pulse_length = DEFAULT_PULSE_LENGTH;
     int default_number_of_pulses = DEFAULT_NUMBER_OF_PULSES;
-    int default_period_ms = DEFAULT_PERIOD_MS;
+    float default_period_ms = DEFAULT_PERIOD_MS;
     int default_pattern = DEFAULT_PATTERN;
 
     xQueueOverwrite(pulse_length_queue, &default_pulse_length );
@@ -109,9 +109,10 @@ void pattern_generator_task(){
     int current_step = 0;
     int current_pattern = 0;
     int delta = 1;
-    xQueuePeek(current_pattern_queue, &current_pattern, (TickType_t) 10);
     float period_ms = DEFAULT_PERIOD_MS;
     while (true){
+        xQueuePeek(period_ms_queue, &period_ms, (TickType_t) 10);
+        xQueuePeek(current_pattern_queue, &current_pattern, (TickType_t) 10);
         switch(current_pattern){
             case 1:
                 constant(true);
@@ -128,3 +129,29 @@ void pattern_generator_task(){
         vTaskDelayUntil(&LastWakeTime, pdMS_TO_TICKS(period_ms));
     }
 }
+
+bool change_pulse_length(int n){
+    int number_of_pulses;
+    xQueuePeek(number_of_pulses_queue, &number_of_pulses, (TickType_t) 10);
+    if(number_of_pulses*n>NUMBER_OF_LEDS){
+        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS");
+        return false;
+    }
+    xQueueOverwrite(pulse_length_queue, &n);
+    return true;
+}
+bool change_number_of_pulses(int n){
+    int pulse_length;
+    xQueuePeek(pulse_length_queue, &pulse_length, (TickType_t) 10);
+    if(pulse_length*n>NUMBER_OF_LEDS){
+        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS");
+        return false;
+    }
+    xQueueOverwrite(number_of_pulses_queue, &n);
+    return true;
+}
+bool change_change_period_ms(float t){
+    xQueueOverwrite(period_ms_queue, &t);
+    return true;
+}
+bool change_pattern(int n);

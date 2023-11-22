@@ -36,9 +36,9 @@ void constant_color(int n, Color color){
 }
 
 void faded(int n, Color color, Color background, int pos_in_pulse, int pulse_length){
-    int R = (uint8_t) background.R + ((pulse_length-pos_in_pulse)*(color.R - background.R )/ pulse_length);
-    int G = (uint8_t) background.G + ((pulse_length-pos_in_pulse)*(color.G - background.G )/ pulse_length);
-    int B = (uint8_t) background.B + ((pulse_length-pos_in_pulse)*(color.B - background.B )/ pulse_length);
+    int R = (uint8_t) background.R + ((pos_in_pulse)*(color.R - background.R )/ pulse_length);
+    int G = (uint8_t) background.G + ((pos_in_pulse)*(color.G - background.G )/ pulse_length);
+    int B = (uint8_t) background.B + ((pos_in_pulse)*(color.B - background.B )/ pulse_length);
     set_color(n, R, G, B);
 }
 

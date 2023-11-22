@@ -9,14 +9,15 @@
 
 #define DEFAULT_PULSE_LENGTH 5
 #define DEFAULT_NUMBER_OF_PULSES 1
-#define DEFAULT_PERIOD_MS 40
-#define DEFAULT_PATTERN 2
+#define DEFAULT_PERIOD_MS 200.0
+#define DEFAULT_PATTERN 3
 
 void pattern_generator_init();
 void pattern_generator_task();
 
-void change_pulse_length(int n);
-void change_number_of_pulses(int n);
-void change_change_period_ms(float t);
+bool change_pulse_length(int n);
+bool change_number_of_pulses(int n);
+bool change_change_period_ms(float t);
+bool change_pattern(int n);
 
 #endif
