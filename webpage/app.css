@@ -22,7 +22,7 @@ body {
   margin-bottom: 10px;
 }
 
-#imageBox {
+#configbox {
   border: 1px solid #ccc;
   padding: 10px;
 }
@@ -36,6 +36,15 @@ img {
   height: auto;
 }
 
+.slider-container > label{
+    width: 100px;
+
+}
+
+.slider-main-container {
+    display: flex;
+    justify-content: space-between;
+}
 
 
 

@@ -219,5 +219,3 @@ document.getElementById("greenSlider").addEventListener("input", updateSliderVal
 document.getElementById("blueSlider").addEventListener("input", updateSliderValues);
 document.getElementById("send-credentials").addEventListener("click", sendEnergyModeJSON);
 document.getElementById("selectPattern").addEventListener("click", sendPatternJSON);
-
-

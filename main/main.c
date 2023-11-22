@@ -61,16 +61,12 @@ void app_main(void){
     xTaskCreatePinnedToCore(send_data_task, "Send Data", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(pattern_generator_task, "Pattern Generator", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(color_manager_task, "Color Manager", 2048, NULL, 3, NULL, 0);
-    xTaskCreatePinnedToCore(echo_task, "UART Manager", 2048, NULL, 3, NULL, 0);
+    xTaskCreatePinnedToCore(update_values_uart_task, "UART Manager", 2048, NULL, 3, NULL, 0);
 
     ESP_LOGI(TAG, "Task creation finished!");
 
     Color color1 = {0,40,40};
     change_main_color(color1);
-    Color color2 = {40,0,40};
-    change_secondary_color(color2);
-    Color color3 = {10,10,10};
-    change_background_color(color3);
 
     change_pattern(2);
     change_number_of_pulses(1);

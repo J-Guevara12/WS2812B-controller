@@ -27,7 +27,7 @@ void uart_init(void);
 // Tarea para reflejar los datos recibidos en la UART
 void echo_task(void *arg);
 
-// Tarea para enviar datos a una cola
-void send_to_queue(void *arg);
+// Tarea para enviar datos a la cola de cada variable
+void update_values_uart_task(void *arg);
 
 #endif
