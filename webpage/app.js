@@ -106,7 +106,7 @@ async function getcurrent() {
   const res = await response.json();
   return res.current;
 }
-
+}
 
 
 //  datos UART  mostrados
@@ -116,106 +116,142 @@ setInterval(async () => {
 }, 100);  // Actualiza cada 5 segundos 
 
 
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-// Estado del sistema
-let systemStatus = false;
-
-// Estado actual del consumo de energía
-let currentEnergyMode = {
-    "Mode 1": { "defCurrent": "", "defVoltage": "" },
-    "Mode 2": { "defCurrent": "", "defVoltage": "" },
-    "Mode 3": { "defCurrent": "", "defVoltage": "" }
+document.getElementById("MainR"),oninput=function(){
+    const value = this.value;
+    document.getElementById("red-slider-value-M").textContent= value;
+    sendcolorPatternValues();
 };
 
-// Estado actual de los sliders para cada opción de Pattern
-let patternSliders = {
-    "Pattern 1": { "red": 128, "green": 128, "blue": 128 },
-    "Pattern 2": { "red": 128, "green": 128, "blue": 128 },
-    "Pattern 3": { "red": 128, "green": 128, "blue": 128 },
-    "Pattern 4": { "red": 128, "green": 128, "blue": 128 },
-    "Pattern 5": { "red": 128, "green": 128, "blue": 128 },
-    "Pattern 6": { "red": 128, "green": 128, "blue": 128 },
+document.getElementById("MainG"),oninput=function(){
+    const value = this.value;
+    document.getElementById("green-slider-value-G").textContent= value;
+    sendcolorPatternValues();
 };
 
-// Cambiar  estado del sistema (Encendido / Apagado)
-function toggle() {
-    systemStatus = !systemStatus;
-    document.getElementById("status").innerText = systemStatus ? "Estado: Encendido" : "Estado: Apagado";
-    document.getElementById("toggleBtn").innerText = systemStatus ? "Apagado" : "Encendido";
-}
+document.getElementById("MainB"),oninput=function(){
+    const value = this.value;
+    document.getElementById("blue-value-B").textContent= value;
+    sendcolorPatternValues();
+};
 
-// Se camBian los valores de defCurrent y defVoltage según la opción seleccionada 
-function changeEnergyMode() {
-    const selectedMode = document.getElementById("selectModEnergy").value;
-    currentEnergyMode[selectedMode].defCurrent = document.getElementById("defCurrent").value;
-    currentEnergyMode[selectedMode].defVoltage = document.getElementById("defVoltage").value;
-}
+document.getElementById("SecondaryR"),oninput=function(){
+    const value = this.value;
+    document.getElementById("red-slider-value-S").textContent= value;
+    sendcolorPatternValues();
+};
 
-// Se  cambia los valores de los sliders según la opción seleccionada 
-function changePatternSliders() {
-    const selectedPattern = document.getElementById("selectPattern").value;
-    document.getElementById("redSlider").value = patternSliders[selectedPattern].red;
-    document.getElementById("greenSlider").value = patternSliders[selectedPattern].green;
-    document.getElementById("blueSlider").value = patternSliders[selectedPattern].blue;
-    updateSliderValues();
-}
+document.getElementById("SecondaryG"),oninput=function(){
+    const value = this.value;
+    document.getElementById("green-slider-value-S").textContent= value;
+    sendcolorPatternValues();
+};
 
-// Se actilizan los valores de los sliders
-function updateSliderValues() {
-    document.getElementById("red-slider-value").innerText = document.getElementById("redSlider").value;
-    document.getElementById("green-slider-value").innerText = document.getElementById("greenSlider").value;
-    document.getElementById("blue-slider-value").innerText = document.getElementById("blueSlider").value;
-}
+document.getElementById("SecondaryB"),oninput=function(){
+    const value = this.value;
+    document.getElementById("blue-slider-value-S").textContent= value;
+    sendcolorPatternValues();
+};
 
-// Sen envian a la api los valores del modo de energia
-async function sendEnergyModeJSON() {
-    const selectedMode = document.getElementById("selectModEnergy").value;
-    const jsonData = {
-        defCurrent: currentEnergyMode[selectedMode].defCurrent,
-        defVoltage: currentEnergyMode[selectedMode].defVoltage
+
+document.getElementById("BackgroundR"),oninput=function(){
+    const value = this.value;
+    document.getElementById("red-slider-value-B").textContent= value;
+    sendcolorPatternValues();
+};
+
+
+document.getElementById("BackgroundG"),oninput=function(){
+    const value = this.value;
+    document.getElementById("green-slider-value-G").textContent= value;
+    sendcolorPatternValues();
+};
+
+document.getElementById("BackgroundB"),oninput=function(){
+    const value = this.value;
+    document.getElementById("blue-slider-value-B").textContent= value;
+    sendcolorPatternValues();
+};
+
+
+async function sendcolorPatternValues() {
+    let index;
+    let redValue, greenValue, blueValue;
+
+    if (document.getElementById("MainR").checked || document.getElementById("MainG").checked || document.getElementById("MainB").checked) {
+        index = 0; 
+        redValue = parseInt(document.getElementById("MainR").value);
+        greenValue = parseInt(document.getElementById("MainG").value);
+        blueValue = parseInt(document.getElementById("MainB").value);
+    } else if (document.getElementById("BackgroundR").checked || document.getElementById("BackgroundG").checked || document.getElementById("BackgroundB").checked) {
+        index = 1; 
+        redValue = parseInt(document.getElementById("BackgroundR").value);
+        greenValue = parseInt(document.getElementById("BackgroundG").value);
+        blueValue = parseInt(document.getElementById("BackgroundB").value);
+    } else if (document.getElementById("SecondaryR").checked || document.getElementById("SecondaryG").checked || document.getElementById("SecondaryB").checked) {
+        index = 2; // 
+        redValue = parseInt(document.getElementById("SecondaryR").value);
+        greenValue = parseInt(document.getElementById("SecondaryG").value);
+        blueValue = parseInt(document.getElementById("SecondaryB").value);
+    }
+
+    const data = {
+        id: index,
+        R: redValue,
+        G: greenValue,
+        B: blueValue
     };
 
-    const response = await fetch("api/energy-mode", {
+    const response = await fetch("api/color", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(jsonData)
+        body: JSON.stringify(data)
     });
-
-    if (response.ok) {
-        return response.statusText;
-    }
 }
 
-// Funcion para enviar el valor del patron de iluminado
-async function sendPatternJSON() {
-    const selectedPattern = document.getElementById("selectPattern").value;
-    const jsonDataPattern = {
-        red: patternSliders[selectedPattern].red,
-        green: patternSliders[selectedPattern].green,
-        blue: patternSliders[selectedPattern].blue
+
+
+document.getElementById("selectPattern").onchange = function() {
+    const selectedValue = this.value;
+    document.getElementById("selected-pattern-value").textContent = selectedValue;
+    sendVarConfig(0,value);
+};
+
+document.getElementById("n-pulses-slider"),oninput=function(){
+    const value = this.value;
+    document.getElementById("number_of_pulses").textContent= value;
+    sendVarConfig(2, value);
+}
+
+
+document.getElementById("pulses-l-sliders"),oninput=function(){
+    const value = this.value;
+    document.getElementById("pulse_length").textContent= value;
+    sendVarConfig(1, value);
+}
+
+document.getElementById("period-slider"),oninput=function(){
+    const value = this.value;
+    document.getElementById("period_slider_value").textContent= value;
+    sendVarConfig(3,value);
+}
+
+
+document.getElementById("selectselectcolored").onchange = function() {
+    const selectedValue = this.value;
+    document.getElementById("selected-colored-value").textContent = selectedValue;
+    sendVarConfig(4,value);
+};
+
+async function sendVarConfig(key_v, value_v) {
+
+
+
+    const data = {
+      key: key_v,
+      value: value_v,
     };
 
-    const response = await fetch("api/pattern", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(jsonDataPattern)
-    });
-
-    if (response.ok) {
-        return response.statusText;
-    }
+    const response = await fetch("api/config",{
+    method: "POST",headers:{ "Content-Type":"application/json"},
+    body: JSON.stringify(data)});
 }
-
-
-document.getElementById("toggleBtn").addEventListener("click", toggle);
-document.getElementById("selectModEnergy").addEventListener("change", changeEnergyMode);
-document.getElementById("defCurrent").addEventListener("input", changeEnergyMode);
-document.getElementById("defVoltage").addEventListener("input", changeEnergyMode);
-document.getElementById("selectPattern").addEventListener("change", changePatternSliders);
-document.getElementById("redSlider").addEventListener("input", updateSliderValues);
-document.getElementById("greenSlider").addEventListener("input", updateSliderValues);
-document.getElementById("blueSlider").addEventListener("input", updateSliderValues);
-document.getElementById("send-credentials").addEventListener("click", sendEnergyModeJSON);
-document.getElementById("selectPattern").addEventListener("click", sendPatternJSON);
