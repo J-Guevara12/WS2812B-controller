@@ -10,9 +10,11 @@
 #include "esp_wifi.h"
 #include "esp_log.h"
 #include "cJSON.h"
+#include "color_manager.h"
 
 #include "esp_wifi_types.h"
 #include "http_server.h"
+#include "pattern_generator.h"
 #include "tasks_common.h"
 #include "wifi_app.h"
 #include <string.h>
@@ -154,9 +156,8 @@ static esp_err_t http_server_favicon_ico_handler(httpd_req_t *req)
 }
 
 
-static esp_err_t http_server_brightness_handler(httpd_req_t *req)
+static esp_err_t http_server_set_color_handler(httpd_req_t *req)
 {
-	ESP_LOGI(TAG, "brightness requested");
 	if (req->method == HTTP_POST){
         int total_len = req->content_len;
         int cur_len = 0;
@@ -173,11 +174,80 @@ static esp_err_t http_server_brightness_handler(httpd_req_t *req)
         data[total_len] = '\0';
 
         cJSON *root = cJSON_Parse(data);
-        int red = cJSON_GetObjectItem(root, "red")->valueint;
-        int green = cJSON_GetObjectItem(root, "green")->valueint;
-        int blue = cJSON_GetObjectItem(root, "blue")->valueint;
+        int red = cJSON_GetObjectItem(root, "R")->valueint;
+        int green = cJSON_GetObjectItem(root, "G")->valueint;
+        int blue = cJSON_GetObjectItem(root, "B")->valueint;
+        int id = cJSON_GetObjectItem(root, "id")->valueint;
 
-        ESP_LOGI(TAG, "%d, %d, %d", red, green, blue);
+        Color color = {red, green, blue};
+
+        switch(id){
+            case 0:
+                change_main_color(color);
+                break;
+            case 1:
+                change_secondary_color(color);
+                break;
+            case 2:
+                change_background_color(color);
+                break;
+            default:
+                ESP_LOGI(TAG, "Invalid color ID");
+                httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to change led value");
+                return ESP_OK;
+        }
+
+        ESP_LOGI(TAG, "color %d changed to (%d, %d, %d)", id, red, green, blue);
+
+        httpd_resp_sendstr(req, "OK");
+		return ESP_OK;
+    }else{
+		httpd_resp_send_404(req);
+		return ESP_OK;
+	}
+}
+
+static esp_err_t http_server_set_variable_handler(httpd_req_t *req)
+{
+	if (req->method == HTTP_POST){
+        int total_len = req->content_len;
+        int cur_len = 0;
+        int received = 0;
+		char data [100];
+        while (cur_len < total_len){
+            received = httpd_req_recv(req, data + cur_len, total_len);
+            if (received<0){
+                httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to post control value");
+                return ESP_FAIL;
+            }
+            cur_len += received;
+        }
+        data[total_len] = '\0';
+
+        ESP_LOGI(TAG,"%s",data);
+        cJSON *root = cJSON_Parse(data);
+        int key = cJSON_GetObjectItem(root, "key")->valueint;
+        int value = cJSON_GetObjectItem(root, "value")->valueint;
+
+        switch(key){
+            case 0:
+                change_pattern(value);
+                break;
+            case 1:
+                change_pulse_length(value);
+                break;
+            case 2:
+                change_number_of_pulses(value);
+                break;
+            case 3:
+                change_change_period_ms(value);
+                break;
+            case 4:
+                change_color_pattern(value);
+                break;
+        }
+
+        ESP_LOGI(TAG, "variable %d changed to  %d", key, value);
 
         httpd_resp_sendstr(req, "OK");
 		return ESP_OK;
@@ -313,14 +383,6 @@ static httpd_handle_t http_server_configure(void)
 		};
 		httpd_register_uri_handler(http_server_handle, &favicon_ico);
 
-		httpd_uri_t brightness_json = {
-				.uri = "/api/brightness",
-				.method = HTTP_POST,
-				.handler = http_server_brightness_handler,
-				.user_ctx = NULL
-		};
-		httpd_register_uri_handler(http_server_handle, &brightness_json);
-
 		httpd_uri_t connect_wifi  = {
 				.uri = "/api/connect",
 				.method = HTTP_POST,
@@ -329,7 +391,21 @@ static httpd_handle_t http_server_configure(void)
 		};
 		httpd_register_uri_handler(http_server_handle, &connect_wifi);
 
+		httpd_uri_t set_color  = {
+				.uri = "/api/color",
+				.method = HTTP_POST,
+				.handler = http_server_set_color_handler,
+				.user_ctx = NULL
+		};
+		httpd_register_uri_handler(http_server_handle, &set_color);
 
+		httpd_uri_t set_variable  = {
+				.uri = "/api/config",
+				.method = HTTP_POST,
+				.handler = http_server_set_variable_handler,
+				.user_ctx = NULL
+		};
+		httpd_register_uri_handler(http_server_handle, &set_variable);
 		
 
 		return http_server_handle;
@@ -368,22 +444,3 @@ BaseType_t http_server_monitor_send_message(http_server_message_e msgID)
 	msg.msgID = msgID;
 	return xQueueSend(http_server_monitor_queue_handle, &msg, portMAX_DELAY);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

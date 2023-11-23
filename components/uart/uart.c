@@ -73,6 +73,14 @@ void update_values_uart_task(void *arg){
                             ESP_LOGI(TAG, "Pattern changed to: %d", n);
                         }
                     }
+                    else if(strcmp(command,"period")==0){
+                        ESP_LOGI(TAG,"Changing period");
+                        char * value_token = strtok(NULL, "_");
+                        int n = atoi(value_token);
+                        if(change_change_period_ms(n)){
+                            ESP_LOGI(TAG, "Pattern changed to: %d", n);
+                        }
+                    }
                     else if(strcmp(command,"mc")==0){
                         ESP_LOGI(TAG,"Changing main color");
                         char * value_token = strtok(NULL, "_");

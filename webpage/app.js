@@ -1,5 +1,3 @@
-
-
 var sendCredentialsButton = document.getElementById("send-credentials");
 var ssdiInput =document.getElementById("ssdi-input");
 var passwordInput = document.getElementById("value-password");
@@ -255,3 +253,16 @@ async function sendVarConfig(key_v, value_v) {
     method: "POST",headers:{ "Content-Type":"application/json"},
     body: JSON.stringify(data)});
 }
+<<<<<<< HEAD
+=======
+document.getElementById("toggleBtn").addEventListener("click", toggle);
+document.getElementById("selectModEnergy").addEventListener("change", changeEnergyMode);
+document.getElementById("defCurrent").addEventListener("input", changeEnergyMode);
+document.getElementById("defVoltage").addEventListener("input", changeEnergyMode);
+document.getElementById("selectPattern").addEventListener("change", changePatternSliders);
+document.getElementById("redSlider").addEventListener("input", updateSliderValues);
+document.getElementById("greenSlider").addEventListener("input", updateSliderValues);
+document.getElementById("blueSlider").addEventListener("input", updateSliderValues);
+document.getElementById("send-credentials").addEventListener("click", sendEnergyModeJSON);
+document.getElementById("selectPattern").addEventListener("click", sendPatternJSON);
+>>>>>>> b0960823c3762c95f294915fbe13a74b7b069f53
