@@ -114,6 +114,13 @@ setInterval(async () => {
 }, 100);  // Actualiza cada 5 segundos 
 
 
+
+
+
+
+
+
+
 document.getElementById("MainR"),oninput=function(){
     const value = this.value;
     document.getElementById("red-slider-value-M").textContent= value;
@@ -198,13 +205,35 @@ async function sendcolorPatternValues() {
         G: greenValue,
         B: blueValue
     };
+    console.log("Datos enviados por sendcolorPatternValues:", data);
 
     const response = await fetch("api/color", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     });
+    
 }
+
+
+// Método GET  de los  valores de los colores de los patrones
+async function getColorPatternValues() {
+    const response = await fetch("api/color", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        return data;
+    } else {
+        console.error("Error al obtener valores de color");
+        return null;
+    }
+}
+const colorValues = await getColorPatternValues();
+console.log("Valores de los colores de los patrones:", colorValues);
+
 
 
 
@@ -241,20 +270,41 @@ document.getElementById("selectselectcolored").onchange = function() {
 };
 
 async function sendVarConfig(key_v, value_v) {
-
-
-
     const data = {
       key: key_v,
       value: value_v,
     };
-
+    console.log("Datos enviados por sendVarConfig:", data);
     const response = await fetch("api/config",{
     method: "POST",headers:{ "Content-Type":"application/json"},
     body: JSON.stringify(data)});
 }
-<<<<<<< HEAD
-=======
+
+
+
+// Método GET para obtener los valores de configuracion.
+async function getVarConfig() {
+    const response = await fetch("api/config", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        return data;
+    } else {
+        console.error("Error al obtener la configuración de variables");
+        return null;
+    }
+}
+const configValues = await getVarConfig();
+console.log("Configuración de variables:", configValues);
+
+
+
+
+
+
 document.getElementById("toggleBtn").addEventListener("click", toggle);
 document.getElementById("selectModEnergy").addEventListener("change", changeEnergyMode);
 document.getElementById("defCurrent").addEventListener("input", changeEnergyMode);
@@ -265,4 +315,3 @@ document.getElementById("greenSlider").addEventListener("input", updateSliderVal
 document.getElementById("blueSlider").addEventListener("input", updateSliderValues);
 document.getElementById("send-credentials").addEventListener("click", sendEnergyModeJSON);
 document.getElementById("selectPattern").addEventListener("click", sendPatternJSON);
->>>>>>> b0960823c3762c95f294915fbe13a74b7b069f53
