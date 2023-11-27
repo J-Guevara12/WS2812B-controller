@@ -133,8 +133,8 @@ void pattern_generator_task(){
 bool change_pulse_length(int n){
     int number_of_pulses;
     xQueuePeek(number_of_pulses_queue, &number_of_pulses, (TickType_t) 10);
-    if(number_of_pulses*n>=NUMBER_OF_LEDS){
-        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS");
+    if(0 >= n || number_of_pulses*n>=NUMBER_OF_LEDS){
+        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS nor zero or less.");
         return false;
     }
     xQueueOverwrite(pulse_length_queue, &n);
@@ -143,8 +143,8 @@ bool change_pulse_length(int n){
 bool change_number_of_pulses(int n){
     int pulse_length;
     xQueuePeek(pulse_length_queue, &pulse_length, (TickType_t) 10);
-    if(pulse_length*n>=NUMBER_OF_LEDS){
-        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS");
+    if(0 >= n || pulse_length*n>=NUMBER_OF_LEDS){
+        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS nor zero or less.");
         return false;
     }
     xQueueOverwrite(number_of_pulses_queue, &n);

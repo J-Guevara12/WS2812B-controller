@@ -15,9 +15,14 @@
 #include "esp_wifi_types.h"
 #include "http_server.h"
 #include "pattern_generator.h"
+#include "portmacro.h"
 #include "tasks_common.h"
 #include "wifi_app.h"
 #include <string.h>
+
+extern QueueHandle_t main_color_queue;
+extern QueueHandle_t secondary_color_queue;
+extern QueueHandle_t background_color_queue;
 
 // Tag used for ESP serial console messages
 static const char TAG[] = "http_server";
@@ -197,14 +202,33 @@ static esp_err_t http_server_set_color_handler(httpd_req_t *req)
                 return ESP_OK;
         }
 
-        ESP_LOGI(TAG, "color %d changed to (%d, %d, %d)", id, red, green, blue);
-
         httpd_resp_sendstr(req, "OK");
 		return ESP_OK;
     }else{
 		httpd_resp_send_404(req);
 		return ESP_OK;
 	}
+}
+
+static esp_err_t http_server_get_color_handler(httpd_req_t *req) {
+    char response[150];
+
+    Color MainColor;
+    Color SecondaryColor;
+    Color BackgroundColor;
+
+    xQueuePeek(main_color_queue, &MainColor, (TickType_t) 10);
+    xQueuePeek(secondary_color_queue, &SecondaryColor, (TickType_t) 10);
+    xQueuePeek(background_color_queue, &BackgroundColor, (TickType_t) 10);
+    
+    
+    
+    sprintf(response,"{ \"main\": { \"R\": 0, \"G\": 0, \"B\": 0 }, \"secondary\": { \"R\": 0, \"G\": 0, \"B\": 0 }, \"background\": { \"R\": 0, \"G\": 0, \"B\": 0 } }");
+    httpd_resp_set_type(req, "application/json");
+	httpd_resp_send(req, response, strlen(response));
+
+    return ESP_OK;
+
 }
 
 static esp_err_t http_server_set_variable_handler(httpd_req_t *req)
@@ -246,8 +270,6 @@ static esp_err_t http_server_set_variable_handler(httpd_req_t *req)
                 change_color_pattern(value);
                 break;
         }
-
-        ESP_LOGI(TAG, "variable %d changed to  %d", key, value);
 
         httpd_resp_sendstr(req, "OK");
 		return ESP_OK;
@@ -399,6 +421,14 @@ static httpd_handle_t http_server_configure(void)
 		};
 		httpd_register_uri_handler(http_server_handle, &set_color);
 
+		httpd_uri_t get_color  = {
+				.uri = "/api/color",
+				.method = HTTP_GET,
+				.handler = http_server_get_color_handler,
+				.user_ctx = NULL
+		};
+		httpd_register_uri_handler(http_server_handle, &get_color);
+
 		httpd_uri_t set_variable  = {
 				.uri = "/api/config",
 				.method = HTTP_POST,
@@ -406,6 +436,14 @@ static httpd_handle_t http_server_configure(void)
 				.user_ctx = NULL
 		};
 		httpd_register_uri_handler(http_server_handle, &set_variable);
+
+		httpd_uri_t get_variable  = {
+				.uri = "/api/config",
+				.method = HTTP_GET,
+				.handler = http_server_get_color_handler,
+				.user_ctx = NULL
+		};
+		httpd_register_uri_handler(http_server_handle, &get_variable);
 		
 
 		return http_server_handle;

@@ -56,7 +56,7 @@ static void wifi_app_event_handler(void *arg, esp_event_base_t event_base, int32
 				break;
 
 			case WIFI_EVENT_AP_STADISCONNECTED:
-				ESP_LOGI(TAG, "WIFI_EVENT_AP_STADISCONNECTED");
+				ESP_LOGI(TAG, "WIFI_EVENT_AP_DISCONNECTED");
 				break;
 
 			case WIFI_EVENT_STA_START:
@@ -180,6 +180,7 @@ static void wifi_app_task(void *pvParameters)
 
 	// Send first event message
 	wifi_app_send_message(WIFI_APP_MSG_START_HTTP_SERVER);
+
     esp_wifi_connect();
 
 	for (;;)
