@@ -48,7 +48,7 @@ void pulses(int * i){
     int pulse_length = 0;
     int number_of_pulses = 0;
     xQueuePeek(pulse_length_queue, &pulse_length, (TickType_t) 10);
-    xQueuePeek(number_of_pulses_queue, &number_of_pu    lses, (TickType_t) 10);
+    xQueuePeek(number_of_pulses_queue, &number_of_pulses, (TickType_t) 10);
 
     if(pulse_length*number_of_pulses > NUMBER_OF_LEDS) {
         ESP_LOGI(TAG,"The size of the pulses is greater than the led strip");
@@ -70,7 +70,7 @@ void pulses(int * i){
 
 }
 
-void swing(int * i, int *   ){
+void swing(int * i, int * delta  ){
     bool enabled_leds[NUMBER_OF_LEDS] = {[0 ... NUMBER_OF_LEDS - 1] = false};
     int pulse_length = 0;
     int number_of_pulses = 0;
