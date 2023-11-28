@@ -9,11 +9,11 @@
 
 #include <math.h>
 
-QueueHandle_t number_of_pulses_queue;
 
 static const char *TAG = "LED_STRIP";
 
 extern QueueHandle_t pulse_length_queue;
+extern QueueHandle_t number_of_pulses_queue;
 extern QueueHandle_t enabled_leds_queue;
 extern QueueHandle_t current_pattern_queue;
 extern QueueHandle_t period_ms_queue;

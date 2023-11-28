@@ -21,7 +21,6 @@ sendCredentialsButton.addEventListener("click", function() {
 })
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////
 //                     IMPLENTACION PARA CARGAR FIRMWARE  (OTA)
 
@@ -44,7 +43,6 @@ function updateFirmware() {
         document.getElementById("ota_update_status").innerHTML = "Uploading " + file.name + ", Firmware Update in Progress...";
         // Http Request
         var request = new XMLHttpRequest();
-        request.upload.addEventListener("progress", updateProgress);
         request.open('POST', "/OTAupdate");
         request.responseType = "blob";
         request.send(formData);
@@ -52,46 +50,6 @@ function updateFirmware() {
         window.alert('Select A File First')
     }
 }
-
-//Progreso de  tranferecnia al servidor del cliente
-function updateProgress(oEvent) {
-    if (oEvent.lengthComputable){
-        getUpdateStatus();
-    } else {
-        window.alert('total size is unknown')
-    }
-}
-
-//Estado de actulizacion de firmaware
-function getUpdateStatus() {
-    var xhr = new XMLHttpRequest();
-    var requestURL = "/OTAstatus";
-    xhr.open('POST', requestURL, false);
-    xhr.send('ota_update_status');
-
-    if (xhr.readyState == 4 && xhr.status == 200) {		
-        var response = JSON.parse(xhr.responseText);				
-	 	document.getElementById("latest_firmware").innerHTML = response.compile_date + " - " + response.compile_time
-		// If flashing was complete it will return a 1, else -1
-		// A return of 0 is just for information on the Latest Firmware request
-        if (response.ota_update_status == 1){
-    		// Set the countdown timer time
-            seconds = 10;
-            otaRebootTimer();
-        } else if (response.ota_update_status == -1){
-            document.getElementById("ota_update_status").innerHTML = "!!! Upload Error !!!";
-        }
-    }
-}
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-///////////////////////////////////////////////////////////////
 
 document.getElementById("MainR").oninput=function(){
     let value = this.value;
@@ -204,9 +162,14 @@ async function getColorPatternValues() {
 
 document.getElementById("selectPattern").onchange = function() {
     const value = parseInt(this.value);
-    document.getElementById("selected-pattern-value").textContent = value;
     sendVarConfig(0,value);
 };
+
+document.getElementById("selectcolored").onchange = function() {
+    const value = parseInt(this.value);
+    sendVarConfig(4,value);
+};
+
 
 document.getElementById("n-pulses-slider").oninput=function(){
     const value = parseInt(this.value);
@@ -238,13 +201,6 @@ document.getElementById("period-slider").oninput=function(){
     document.getElementById("period_slider_value").textContent= Math.round(value) + " ms";
     sendVarConfig(3,value);
 }
-
-
-document.getElementById("selectcolored").onchange = function() {
-    const value = parseInt(this.value);
-    document.getElementById("selected-colored-value").textContent = value;
-    sendVarConfig(4,value);
-};
 
 async function sendVarConfig(key_v, value_v) {
     if(value_v==null){
@@ -278,3 +234,50 @@ const getVarConfig = async () => {
         return null;
     }
 };
+
+const  updateColors = (data) => {
+        document.getElementById("MainR").value = data.main.R
+        document.getElementById("red-slider-value-M").textContent = data.main.R;
+        document.getElementById("MainG").value = data.main.G
+        document.getElementById("green-slider-value-M").textContent = data.main.G;
+        document.getElementById("MainB").value = data.main.B
+        document.getElementById("blue-slider-value-M").textContent = data.main.B;
+        document.getElementById("SecondaryR").value = data.secondary.R
+        document.getElementById("red-slider-value-S").textContent = data.secondary.R;
+        document.getElementById("SecondaryG").value = data.secondary.G
+        document.getElementById("green-slider-value-S").textContent = data.secondary.G;
+        document.getElementById("SecondaryB").value = data.secondary.B
+        document.getElementById("blue-slider-value-S").textContent = data.secondary.B;
+        document.getElementById("BackgroundR").value = data.background.R
+        document.getElementById("red-slider-value-B").textContent = data.background.R;
+        document.getElementById("BackgroundG").value = data.background.G
+        document.getElementById("green-slider-value-B").textContent = data.background.G;
+        document.getElementById("BackgroundB").value = data.background.B
+        document.getElementById("blue-slider-value-B").textContent = data.background.B;
+}
+
+const updateVariables = (data) => {
+    document.getElementById("selectPattern").value = data.pattern
+    document.getElementById("selectcolored").value = data.color_pattern
+
+    document.getElementById("n-pulses-slider").value = data.number_of_pulses
+    document.getElementById("number_of_pulses").textContent = data.number_of_pulses;
+
+    document.getElementById("pulse-l-slider").value = data.pulse_length
+    document.getElementById("pulse_length").textContent = data.pulse_length;
+
+    document.getElementById("period-slider").value = data.period
+    document.getElementById("period_slider_value").textContent = data.period + " ms";
+
+
+}
+
+setInterval(async () =>{
+    const data = await getColorPatternValues();
+    updateColors(data)
+},2000)
+
+setInterval(async () =>{
+    const data = await getVarConfig();
+    updateVariables(data)
+},2000)

@@ -9,6 +9,8 @@ idf_component_register(SRCS
         "../components/pattern_generator/pattern_generator.c" 
         "../components/color_manager/color_manager.c" 
         "../components/current_sensor/acs712.c"
+        "../components/ssd1306/ssd1306.c"
+        "../components/ssd1306/ssd1306_fonts.c"
     INCLUDE_DIRS 
         "." 
         "../components/wifi_app"
@@ -21,4 +23,5 @@ idf_component_register(SRCS
         "../components/pattern_generator"
         "../components/color_manager"
         "../components/current_sensor"
+        "../components/ssd1306"
                     EMBED_FILES ../webpage/app.css ../webpage/app.js ../webpage/favicon.ico ../webpage/index.html)
