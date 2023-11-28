@@ -11,6 +11,7 @@ idf_component_register(SRCS
         "../components/current_sensor/acs712.c"
         "../components/ssd1306/ssd1306.c"
         "../components/ssd1306/ssd1306_fonts.c"
+        "../components/display/display.c"
     INCLUDE_DIRS 
         "." 
         "../components/wifi_app"
@@ -24,4 +25,5 @@ idf_component_register(SRCS
         "../components/color_manager"
         "../components/current_sensor"
         "../components/ssd1306"
+        "../components/display"
                     EMBED_FILES ../webpage/app.css ../webpage/app.js ../webpage/favicon.ico ../webpage/index.html)

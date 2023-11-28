@@ -16,6 +16,7 @@
 #include "uart.h"
 #include "pattern_generator.h"
 #include "color_manager.h"
+#include "display.h"
 
 #include "acs712.h"
 
@@ -62,6 +63,8 @@ void app_main(void){
     color_manager_init();
 	wifi_app_start();
     uart_init();
+    display_init();
+    test();
 
     xTaskCreatePinnedToCore(send_data_task, "Send Data", 2048, NULL, 1, NULL, 0);
     xTaskCreatePinnedToCore(pattern_generator_task, "Pattern Generator", 2048, NULL, 3, NULL, 0);
