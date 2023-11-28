@@ -1,4 +1,5 @@
 #include <adc.h>
+#include <math.h>
 #include "esp_err.h"
 #include "esp_log.h"
 
@@ -25,7 +26,7 @@ void adc_init(void){
     };
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handler, ADC_CHAN, &config));
 
-    current_queue = xQueueCreate(1, sizeof(int));
+    current_queue = xQueueCreate(1, sizeof(float));
 
     ESP_LOGI(TAG,"ADC intialized");
 }
@@ -34,10 +35,12 @@ void adc_init(void){
 //Tarea: Escribe valores en la cola a  utilizar
 void write_queue(){
     int val;
+    float current;
     while (true){
         ESP_ERROR_CHECK(adc_oneshot_read(adc_handler, ADC_CHAN, &val));
-        xQueueSend(current_queue,&val,(TickType_t)10);  // Envia el valor de la intesidad del lED a la cola
-        ESP_LOGI(TAG,"%d",val);
+        current = (float) val / 4096;
+        current = CALIBRATION_M * current + CALIBRATION_B;
+        xQueueOverwrite(current_queue,&current);  // Envia el valor de la intesidad del lED a la cola
         vTaskDelay(pdMS_TO_TICKS(UPDATE_PERIOD)); // Tiempo de espera para la proxima lectura
     }
 }

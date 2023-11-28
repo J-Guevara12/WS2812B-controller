@@ -61,13 +61,13 @@ void app_main(void){
     uart_init();
     display_init();
     adc_init();
-    test();
 
     xTaskCreatePinnedToCore(send_data_task, "Send Data", 2048, NULL, 1, NULL, 0);
     xTaskCreatePinnedToCore(pattern_generator_task, "Pattern Generator", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(color_manager_task, "Color Manager", 2048, NULL, 1, NULL, 0);
     xTaskCreatePinnedToCore(update_values_uart_task, "UART Manager", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(write_queue, "ADC Current", 2048, NULL, 3, NULL, 0);
+    xTaskCreatePinnedToCore(display_task, "Display_tas", 2048, NULL, 3, NULL, 0);
 
     ESP_LOGI(TAG, "Task creation finished!");
 

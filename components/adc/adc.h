@@ -14,6 +14,10 @@
 #define ADC_ATTEN ADC_ATTEN_DB_11
 #define ADC_CHAN ADC_CHANNEL_6
 
+#define SENSIBILITY 185
+#define CALIBRATION_M -2666.66
+#define CALIBRATION_B 1946
+
 
 // Inicialización del ADC
 void adc_init(void);
