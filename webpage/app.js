@@ -20,8 +20,6 @@ sendCredentialsButton.addEventListener("click", function() {
     })
 })
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////////
 //                     IMPLENTACION PARA CARGAR FIRMWARE  (OTA)
 
@@ -86,11 +84,6 @@ function getUpdateStatus() {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
-
-
-
 ///////////////////////////////////////////////////////////////
 
 
@@ -112,12 +105,6 @@ setInterval(async () => {
     const current = await getcurrent();
     updatecurrentsensor(current);
 }, 100);  // Actualiza cada 5 segundos 
-
-
-
-
-
-
 
 
 
@@ -215,7 +202,6 @@ async function sendcolorPatternValues() {
     
 }
 
-
 // Método GET  de los  valores de los colores de los patrones
 async function getColorPatternValues() {
     const response = await fetch("api/color", {
@@ -233,8 +219,6 @@ async function getColorPatternValues() {
 }
 const colorValues = await getColorPatternValues();
 console.log("Valores de los colores de los patrones:", colorValues);
-
-
 
 
 document.getElementById("selectPattern").onchange = function() {
@@ -280,8 +264,6 @@ async function sendVarConfig(key_v, value_v) {
     body: JSON.stringify(data)});
 }
 
-
-
 // Método GET para obtener los valores de configuracion.
 async function getVarConfig() {
     const response = await fetch("api/config", {
@@ -299,11 +281,6 @@ async function getVarConfig() {
 }
 const configValues = await getVarConfig();
 console.log("Configuración de variables:", configValues);
-
-
-
-
-
 
 document.getElementById("toggleBtn").addEventListener("click", toggle);
 document.getElementById("selectModEnergy").addEventListener("change", changeEnergyMode);
