@@ -5,8 +5,8 @@
 #define UPDATE_PERIOD 20   // Periodo de actulizacion 20 milisegundos
 
 static const char *TAG = "ADC"; //llamado de colas externas  
-extern QueueHandle_t brightness;  // Cola para la intensidad del LED
-extern QueueHandle_t temperatureQueue; // Cola para la temperatura
+
+extern QueueHandle_t current_queue;  // Cola para la intensidad corriente
 
 adc_oneshot_unit_handle_t adc_handler;
 
@@ -25,6 +25,8 @@ void adc_init(void){
     };
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handler, ADC_CHAN, &config));
 
+    current_queue = xQueueCreate(1, sizeof(int));
+
     ESP_LOGI(TAG,"ADC intialized");
 }
 
@@ -34,7 +36,8 @@ void write_queue(){
     int val;
     while (true){
         ESP_ERROR_CHECK(adc_oneshot_read(adc_handler, ADC_CHAN, &val));
-        xQueueSend(brightness,&val,(TickType_t)10);  // Envia el valor de la intesidad del lED a la cola
+        xQueueSend(current_queue,&val,(TickType_t)10);  // Envia el valor de la intesidad del lED a la cola
+        ESP_LOGI(TAG,"%d",val);
         vTaskDelay(pdMS_TO_TICKS(UPDATE_PERIOD)); // Tiempo de espera para la proxima lectura
     }
 }

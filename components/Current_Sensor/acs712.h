@@ -9,7 +9,6 @@
 
 
 #define  ACS712_SENSOR_PIN  34  //pin a conectar
-#define ACS712_V_REF      1100  //  valor de referencia (mV)
 
 typedef struct {
     float current;

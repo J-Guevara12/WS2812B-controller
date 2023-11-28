@@ -46,7 +46,7 @@ static TaskHandle_t task_http_server_monitor = NULL;
 // Queue handle used to manipulate the main queue of events
 static QueueHandle_t http_server_monitor_queue_handle;
 
-extern QueueHandle_t brightness;
+extern QueueHandle_t current_queue;
 
 
 // Embedded files: JQuery, index.html, app.css, app.js and favicon.ico files

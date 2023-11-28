@@ -41,11 +41,9 @@ QueueHandle_t pulse_length_queue;
 QueueHandle_t number_of_pulses_queue;
 QueueHandle_t period_ms_queue;
 
-void app_main(void){
-    CurrentVoltageValues result = acs712_read_current_voltage();
-    float current = result.current;
-    float voltage = result.voltage;
+QueueHandle_t current_queue;  // Cola para la intensidad corriente
 
+void app_main(void){
     // Initialize NVS
 	esp_err_t ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
@@ -55,21 +53,21 @@ void app_main(void){
 	}
 	ESP_ERROR_CHECK(ret);
    
-    ESP_LOGI(TAG, "current: %2f  Am", current);
     // Inicializa las colas / variables compartidas
-
     led_strip_init();
     pattern_generator_init();
     color_manager_init();
 	wifi_app_start();
     uart_init();
     display_init();
+    adc_init();
     test();
 
     xTaskCreatePinnedToCore(send_data_task, "Send Data", 2048, NULL, 1, NULL, 0);
     xTaskCreatePinnedToCore(pattern_generator_task, "Pattern Generator", 2048, NULL, 3, NULL, 0);
     xTaskCreatePinnedToCore(color_manager_task, "Color Manager", 2048, NULL, 1, NULL, 0);
     xTaskCreatePinnedToCore(update_values_uart_task, "UART Manager", 2048, NULL, 3, NULL, 0);
+    xTaskCreatePinnedToCore(write_queue, "ADC Current", 2048, NULL, 3, NULL, 0);
 
     ESP_LOGI(TAG, "Task creation finished!");
 
