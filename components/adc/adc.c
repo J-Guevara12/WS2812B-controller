@@ -2,6 +2,11 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
+#include "display.h"
+#include "ssd1306.h"
+
+
+
 #define UPDATE_PERIOD 20   // Periodo de actulizacion 20 milisegundos
 
 static const char *TAG = "ADC"; //llamado de colas externas  
@@ -40,4 +45,34 @@ void write_queue(){
         ESP_LOGI(TAG,"%d",val);
         vTaskDelay(pdMS_TO_TICKS(UPDATE_PERIOD)); // Tiempo de espera para la proxima lectura
     }
+}
+
+
+#define THRESHOLD_VALUE 500
+
+void check_threshold(int value) {
+    if (value > THRESHOLD_VALUE) {
+        ESP_LOGI(TAG, "Threshold exceeded! Taking action...");
+        
+         show_warning_on_display();  
+    }
+}
+
+
+void show_warning_on_display() {
+    
+    char warning_message[20];
+    snprintf(warning_message, sizeof(warning_message), "Warning!");
+
+  
+    ssd1306_clear_screen(ssd1306_dev, 0x00);
+    ssd1306_draw_string(ssd1306_dev, 0, 0, (const uint8_t *)warning_message, 16, 1); 
+    ssd1306_refresh_gram(ssd1306_dev);
+
+
+    vTaskDelay(pdMS_TO_TICKS(3000));
+
+ 
+    ssd1306_clear_screen(ssd1306_dev, 0x00);
+    ssd1306_refresh_gram(ssd1306_dev);
 }
