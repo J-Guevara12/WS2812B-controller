@@ -11,7 +11,7 @@
 #define DEFAULT_NUMBER_OF_PULSES 3
 #define DEFAULT_PERIOD_MS 100.0
 #define DEFAULT_PATTERN 1
-#define MAXIMUM_PATTERN 3
+#define MAXIMUM_PATTERN 4
 
 void pattern_generator_init();
 void pattern_generator_task();

@@ -1,9 +1,12 @@
 #include <string.h>
-#include<sys/time.h>
+#include <sys/time.h>
+#include "freertos/projdefs.h"
+#include "math.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+#include "portmacro.h"
 #include "ssd1306.h"
 #include "display.h"
 #include "esp_log.h"
@@ -11,6 +14,8 @@
 static const char* TAG = "DISPLAY";
 static i2c_config_t conf;
 static ssd1306_handle_t ssd1306_dev = NULL;
+
+extern QueueHandle_t current_queue;  // Cola para la intensidad corriente
 
 void display_init(){
 
@@ -34,9 +39,23 @@ void display_init(){
 }
 
 void test(){
-    char data_str[15] = {};
+    char data_str[32] = {};
     sprintf(data_str, "Hello world!");
     ssd1306_draw_string(ssd1306_dev, 0, 0, (const uint8_t *)data_str, 16, 0);
     ssd1306_refresh_gram(ssd1306_dev);
+}
+
+void display_task(){
+    char data_str[32] = {};
+    float current;
+    while (true){
+        sprintf(data_str, "Current: %2f mA",current);
+        //current = round(current*100)/100;
+        xQueuePeek(current_queue, &current, (TickType_t) 10);
+        ssd1306_draw_string(ssd1306_dev, 0, 0, (const uint8_t *)data_str, 16, 0);
+        ssd1306_refresh_gram(ssd1306_dev);
+
+        vTaskDelay(pdMS_TO_TICKS(200));
+    }
 }
 

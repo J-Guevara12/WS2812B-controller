@@ -104,40 +104,6 @@ void swing(int * i, int * delta  ){
 }
 
 
-#define FREQUENCY 1.0
-#define AMPLITUDE 0.5
-
-void SineWave(int *i) {
-    bool enabled_leds[NUMBER_OF_LEDS] = {[0 ... NUMBER_OF_LEDS - 1] = false};
-    int pulse_length = 0;
-    int number_of_pulses = 0;
-    
-    xQueuePeek(pulse_length_queue, &pulse_length, (TickType_t) 10);
-    xQueuePeek(number_of_pulses_queue, &number_of_pulses, (TickType_t) 10);
-
-    if (pulse_length * number_of_pulses > NUMBER_OF_LEDS) {
-        ESP_LOGI(TAG, "The size of the pulses is greater than the LED strip");
-        return;
-    }
-
-    int space = (NUMBER_OF_LEDS - pulse_length * number_of_pulses) / (number_of_pulses);
-
-    for (int j = 0; j < number_of_pulses; j++) {
-        for (int k = 0; k < pulse_length; k++) {
-            // Toma la posicion del led y calcula el brillo  en funcion de una onda seno
-            float brightness = AMPLITUDE * sin(2 * M_PI * FREQUENCY * (*i + k) / NUMBER_OF_LEDS);
-            int index = (*i + k + (space + pulse_length) * j) % NUMBER_OF_LEDS;
-            enabled_leds[index] = brightness > 0.5;  // configura el brillo  si es mayor a   0.5
-        }
-    }
-
-    (*i)++;
-    *i %= NUMBER_OF_LEDS;
-
-    xQueueOverwrite(enabled_leds_queue, &enabled_leds);
-}
-
-
 void pattern_generator_task(){
     ESP_LOGI(TAG,"Started pattern generator task");
     TickType_t LastWakeTime = xTaskGetTickCount();

@@ -8,5 +8,6 @@
 
 void display_init();
 void test();
+void display_task();
 
 #endif
