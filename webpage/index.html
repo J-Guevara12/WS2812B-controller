@@ -44,27 +44,24 @@
     <div id="box1">
       <!-- Contenido del primer recuadro en la segunda columna -->
       <h4>Consumption Energy Mode</h4>
-      <select id="selectModEnergy">
+      <select id="selectModEnergy" onchange="updateConsumptionMode()">
         <option value="Mode 1">Maximum Consumption</option>
         <option value="Mode 2">Regulated consumption</option>
         <option value="Mode 3"> Saving</option>
       </select>
       <br>
-      <input type="text" id="defCurrent" placeholder=" Define Current">
-      <input type="text" id="def voltage" placeholder=" Define Voltage">
-      <button type="button">Changed</button>
+   
     </div>
 
     <div id="box2">
     
       <h4>Select  Lighting Pattern</h4>
-      <select id="selectPattern">
+      <select id="selectPattern" onchange="updateLightingPattern()">
         <option value=0>Off</option>
         <option value=1>Constant</option>
         <option value=2>Pulses</option>
         <option value=3>Swing</option>
       </select>
-      <div id="selected-pattern-value"></div>
 
       <select id="selectcolored">
         <option value=0>Nothing</option>
@@ -72,28 +69,25 @@
         <option value=2>Fade</option>
         
       </select>
-      <div id="selected-colored-value"></div>
-
-
 
       <div class="slider-main-container">
           <div class="sliders-container">
               <h2>Main</h2>
               <div class="slider-container">
                 <label for="MainR">R:</label>
-                <input type="range" min="0" max="255" value=0 class="slider" id="MainR">
+                <input type="range" min="0" max="255" value="0" class="slider" id="MainR">
                 <p id="red-slider-value-M">0</p> <!-- Elemento para mostrar el valor -->
               </div>
             
               <div class="slider-container">
                 <label for="MainG">G:</label>
-                <input type="range" min="0" max="255" value=0 class="slider" id="MainG">
+                <input type="range" min="0" max="255" value="0" class="slider" id="MainG">
                 <p id="green-slider-value-M">0</p> <!-- Elemento para mostrar el valor -->
               </div>
             
               <div class="slider-container">
                 <label for="MainB">B:</label>
-                <input type="range" min="0" max="255" value=0 class="slider" id="MainB">
+                <input type="range" min="0" max="255" value="0" class="slider" id="MainB">
                 <p id="blue-slider-value-M">0</p> <!-- Elemento para mostrar el valor -->
               </div>
           </div>
@@ -101,19 +95,19 @@
               <h2>Secondary</h2>
               <div class="slider-container">
                 <label for="SecondaryR">R:</label>
-                <input type="range" min="0" max="255" value=0 class="slider" id="SecondaryR">
+                <input type="range" min="0" max="255" value="0" class="slider" id="SecondaryR">
                 <p id="red-slider-value-S">0</p> <!-- Elemento para mostrar el valor -->
               </div>
             
               <div class="slider-container">
                 <label for="SecondaryG">G:</label>
-                <input type="range" min="0" max="255" value=0 class="slider" id="SecondaryG">
+                <input type="range" min="0" max="255" value="0" class="slider" id="SecondaryG">
                 <p id="green-slider-value-S">0</p> <!-- Elemento para mostrar el valor -->
               </div>
             
               <div class="slider-container">
                 <label for="SecondaryB">B:</label>
-                <input type="range" min="0" max="255" value=0 class="slider" id="SecondaryB">
+                <input type="range" min="0" max="255" value="0" class="slider" id="SecondaryB">
                 <p id="blue-slider-value-S">0</p> <!-- Elemento para mostrar el valor -->
               </div>
           </div>
@@ -121,19 +115,19 @@
               <h2>Background</h2>
               <div class="slider-container">
                 <label for="BackgroundR">R:</label>
-                <input type="range" min="0" max="255" value=0 class="slider" id="BackgroundR">
+                <input type="range" min="0" max="255" value="0" class="slider" id="BackgroundR">
                 <p id="red-slider-value-B">0</p> <!-- Elemento para mostrar el valor -->
               </div>
             
               <div class="slider-container">
                 <label for="BackgroundG">G:</label>
-                <input type="range" min="0" max="255" value=0 class="slider" id="BackgroundG">
+                <input type="range" min="0" max="255" value="0" class="slider" id="BackgroundG">
                 <p id="green-slider-value-B">0</p> <!-- Elemento para mostrar el valor -->
               </div>
             
               <div class="slider-container">
                 <label for="BackgroundB">B:</label>
-                <input type="range" min="0" max="255" value=0 class="slider" id="BackgroundB">
+                <input type="range" min="0" max="255" value="0" class="slider" id="BackgroundB">
                 <p id="blue-slider-value-B">0</p> <!-- Elemento para mostrar el valor -->
               </div>
           </div>
@@ -145,12 +139,11 @@
 
   <div class="column" id="column3">
     <div id="box3">
-      <!-- Contenido del primer recuadro en la tercera columna -->
       <h1>INFORMATION</h1>
       <p>Current: </p>
-      <p>Voltaje:</p>
-      <p>Consumption mode:</p>
-      <p>Pattern: </p>
+      <p>Voltaje:  5 v</p>
+      <p>Consumption mode: <span id="consumptionMode"></span></p>
+      <>Pattern: <span id="lightingPattern"></span></p>
     </div>
 
     
@@ -160,19 +153,19 @@
           <div class="config-container">
               <div class="slider-container">
                 <label for="number_ of_pulses">Number of pulses:</label>
-                <input type="range" min=0 max=10 value=1 class="slider" id="n-pulses-slider">
+                <input type="range" min=1 max=8 value=1 class="slider" id="n-pulses-slider">
                 <p id="number_of_pulses">0</p> <!-- Elemento para mostrar el valor -->
               </div>
             
               <div class="slider-container">
                 <label for="Pulse-length">Pulse length:</label>
-                <input type="range" min=0 max=10 value=1 class="slider" id="pulse-l-slider">
+                <input type="range" min=1 max=16 value=1 class="slider" id="pulse-l-slider">
                 <p id="pulse_length">0</p> <!-- Elemento para mostrar el valor -->
               </div>
             
               <div class="slider-container">
                 <label for="Perid-sliders">period:</label>
-                <input type="range" min="500" max="1000" value=1 class="slider" id="period-slider">
+                <input type="range" min="0" max="1000" value=10 class="slider" id="period-slider">
                 <p id="period_slider_value">500  ms</p> <!-- Elemento para mostrar el valor -->
               </div>
           </div>

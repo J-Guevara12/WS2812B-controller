@@ -9,11 +9,11 @@
 
 #include <math.h>
 
-QueueHandle_t number_of_pulses_queue;
 
 static const char *TAG = "LED_STRIP";
 
 extern QueueHandle_t pulse_length_queue;
+extern QueueHandle_t number_of_pulses_queue;
 extern QueueHandle_t enabled_leds_queue;
 extern QueueHandle_t current_pattern_queue;
 extern QueueHandle_t period_ms_queue;
@@ -48,7 +48,7 @@ void pulses(int * i){
     int pulse_length = 0;
     int number_of_pulses = 0;
     xQueuePeek(pulse_length_queue, &pulse_length, (TickType_t) 10);
-    xQueuePeek(number_of_pulses_queue, &number_of_pu    lses, (TickType_t) 10);
+    xQueuePeek(number_of_pulses_queue, &number_of_pulses, (TickType_t) 10);
 
     if(pulse_length*number_of_pulses > NUMBER_OF_LEDS) {
         ESP_LOGI(TAG,"The size of the pulses is greater than the led strip");
@@ -70,7 +70,7 @@ void pulses(int * i){
 
 }
 
-void swing(int * i, int *   ){
+void swing(int * i, int * delta  ){
     bool enabled_leds[NUMBER_OF_LEDS] = {[0 ... NUMBER_OF_LEDS - 1] = false};
     int pulse_length = 0;
     int number_of_pulses = 0;
@@ -168,8 +168,8 @@ void pattern_generator_task(){
 bool change_pulse_length(int n){
     int number_of_pulses;
     xQueuePeek(number_of_pulses_queue, &number_of_pulses, (TickType_t) 10);
-    if(number_of_pulses*n>=NUMBER_OF_LEDS){
-        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS");
+    if(0 >= n || number_of_pulses*n>=NUMBER_OF_LEDS){
+        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS nor zero or less.");
         return false;
     }
     xQueueOverwrite(pulse_length_queue, &n);
@@ -178,8 +178,8 @@ bool change_pulse_length(int n){
 bool change_number_of_pulses(int n){
     int pulse_length;
     xQueuePeek(pulse_length_queue, &pulse_length, (TickType_t) 10);
-    if(pulse_length*n>=NUMBER_OF_LEDS){
-        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS");
+    if(0 >= n || pulse_length*n>=NUMBER_OF_LEDS){
+        ESP_LOGI(TAG,"The number of pulses times the pulses length cannot be greather than the number of LEDS nor zero or less.");
         return false;
     }
     xQueueOverwrite(number_of_pulses_queue, &n);
