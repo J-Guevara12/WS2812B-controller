@@ -6,7 +6,7 @@
 #include "display.h"
 #include "ssd1306.h"
 
-
+ssd1306_handle_t ssd1306_dev;
 
 #define UPDATE_PERIOD 20   // Periodo de actulizacion 20 milisegundos
 
@@ -37,6 +37,25 @@ void adc_init(void){
 }
 
 
+
+void show_warning_on_display() {
+    
+    char warning_message[20];
+    snprintf(warning_message, sizeof(warning_message), "Warning!");
+
+  
+    ssd1306_clear_screen(ssd1306_dev, 0x00);
+    ssd1306_draw_string(ssd1306_dev, 0, 0, (const uint8_t *)warning_message, 16, 1); 
+    ssd1306_refresh_gram(ssd1306_dev);
+
+
+    vTaskDelay(pdMS_TO_TICKS(3000));
+
+ 
+    ssd1306_clear_screen(ssd1306_dev, 0x00);
+    ssd1306_refresh_gram(ssd1306_dev);
+}
+
 //Tarea: Escribe valores en la cola a  utilizar
 void write_queue(){
     int val;
@@ -61,21 +80,3 @@ void check_threshold(int value) {
     }
 }
 
-
-void show_warning_on_display() {
-    
-    char warning_message[20];
-    snprintf(warning_message, sizeof(warning_message), "Warning!");
-
-  
-    ssd1306_clear_screen(ssd1306_dev, 0x00);
-    ssd1306_draw_string(ssd1306_dev, 0, 0, (const uint8_t *)warning_message, 16, 1); 
-    ssd1306_refresh_gram(ssd1306_dev);
-
-
-    vTaskDelay(pdMS_TO_TICKS(3000));
-
- 
-    ssd1306_clear_screen(ssd1306_dev, 0x00);
-    ssd1306_refresh_gram(ssd1306_dev);
-}
