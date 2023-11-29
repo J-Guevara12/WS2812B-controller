@@ -19,6 +19,7 @@
 #include "display.h"
 
 #include "acs712.h"
+#include "freertos/semphr.h"
 
 
 //-------------------------------------------------------------------------------
@@ -43,7 +44,51 @@ QueueHandle_t period_ms_queue;
 
 QueueHandle_t current_queue;  // Cola para la intensidad corriente
 
+
+
+#define BUTTON_GPIO_PIN GPIO_NUM_21 // Reemplaza GPIO_NUM_0 con el número de pin correcto del botón
+
+SemaphoreHandle_t button_semaphore;
+void button_task(void *arg) {
+    while (1) {
+        if (gpio_get_level(BUTTON_GPIO_PIN) == 0) {
+            // El botón está presionado
+            xSemaphoreGive(button_semaphore);
+            vTaskDelay(pdMS_TO_TICKS(1000)); 
+        }
+        vTaskDelay(pdMS_TO_TICKS(50));
+    }
+}
+
+void stop_program() {
+    // Detiene el sistema
+    vTaskDelete(NULL);
+}
+
 void app_main(void){
+
+
+    //boton acciones
+    button_semaphore = xSemaphoreCreateBinary();
+    gpio_config_t io_conf = {
+        .pin_bit_mask = (1ULL << BUTTON_GPIO_PIN),
+        .mode = GPIO_MODE_INPUT,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&io_conf);
+
+    // tarea para manejar el botón
+    xTaskCreate(button_task, "Button Task", 2048, NULL, 5, NULL);
+
+    while (1) {
+        // Esperar hasta que el semáforo del botón se libere
+        if (xSemaphoreTake(button_semaphore, portMAX_DELAY)) {
+            ESP_LOGI(TAG, "Button pressed! Stopping the program.");
+            stop_program();
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////
     // Initialize NVS
 	esp_err_t ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
