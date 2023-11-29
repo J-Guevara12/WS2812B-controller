@@ -24,5 +24,5 @@ void adc_init(void);
 
 // Función para escribir datos en una cola
 void write_queue();
-
+void check_threshold(int value);
 #endif

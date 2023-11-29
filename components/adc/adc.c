@@ -2,8 +2,16 @@
 #include <math.h>
 #include "esp_err.h"
 #include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
 
 #define UPDATE_PERIOD 20   // Periodo de actulizacion 20 milisegundos
+#define THRESHOLD_VALUE 11300
+
+#include "display.h"
+#include "adc.h"
+
 
 static const char *TAG = "ADC"; //llamado de colas externas  
 
@@ -41,6 +49,19 @@ void write_queue(){
         current = (float) val / 4096;
         current = CALIBRATION_M * current + CALIBRATION_B;
         xQueueOverwrite(current_queue,&current);  // Envia el valor de la intesidad del lED a la cola
+        check_threshold(val);
         vTaskDelay(pdMS_TO_TICKS(UPDATE_PERIOD)); // Tiempo de espera para la proxima lectura
+    }
+}
+
+
+void check_threshold(int value) {
+    if (value > THRESHOLD_VALUE) {
+        ESP_LOGI(TAG, "Threshold exceeded! Taking action...");
+         
+         show_warning_on_display();
+
+    }else{
+        clear_display();
     }
 }

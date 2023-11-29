@@ -51,6 +51,29 @@ function updateFirmware() {
     }
 }
 
+function updateConsumptionMode() {
+    var selectElement = document.getElementById("selectModEnergy");
+    var selectedOption = selectElement.options[selectElement.selectedIndex].text;
+
+    var consumptionModeElement = document.getElementById("consumptionMode");
+    consumptionModeElement.textContent = selectedOption;
+}
+
+function updateLightingPattern() {
+    var selectElement = document.getElementById("selectPattern");
+    var selectedOption = selectElement.options[selectElement.selectedIndex].text;
+
+    var lightingPatternElement = document.getElementById("lightingPattern");
+    lightingPatternElement.textContent = selectedOption;
+}
+
+
+
+
+
+
+
+
 document.getElementById("MainR").oninput=function(){
     let value = this.value;
     document.getElementById("red-slider-value-M").textContent = value;

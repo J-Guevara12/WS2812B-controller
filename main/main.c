@@ -43,6 +43,7 @@ QueueHandle_t period_ms_queue;
 
 QueueHandle_t current_queue;  // Cola para la intensidad corriente
 
+
 void app_main(void){
     // Initialize NVS
 	esp_err_t ret = nvs_flash_init();

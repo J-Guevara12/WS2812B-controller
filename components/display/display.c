@@ -59,3 +59,22 @@ void display_task(){
     }
 }
 
+
+void show_warning_on_display() {
+    // Mensaje de advertencia
+    char warning_message[20];
+    snprintf(warning_message, sizeof(warning_message), "Warning!");
+
+    // Limpia la pantalla y muestra el mensaje
+    ssd1306_clear_screen(ssd1306_dev, 0x00);
+    ssd1306_draw_string(ssd1306_dev, 0, 0, (const uint8_t *)warning_message, 16, 1); // El último parámetro (1) indica que se utilizará la fuente grande
+    ssd1306_refresh_gram(ssd1306_dev);
+}
+
+void clear_display() {
+    // Borra la pantalla
+    ssd1306_clear_screen(ssd1306_dev, 0x00);
+    ssd1306_refresh_gram(ssd1306_dev);
+}
+
+

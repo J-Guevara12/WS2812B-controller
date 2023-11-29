@@ -10,4 +10,9 @@ void display_init();
 void test();
 void display_task();
 
+
+void show_warning_on_display();
+void clear_display();
+
+
 #endif

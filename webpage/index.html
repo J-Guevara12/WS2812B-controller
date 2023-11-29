@@ -44,21 +44,19 @@
     <div id="box1">
       <!-- Contenido del primer recuadro en la segunda columna -->
       <h4>Consumption Energy Mode</h4>
-      <select id="selectModEnergy">
+      <select id="selectModEnergy" onchange="updateConsumptionMode()">
         <option value="Mode 1">Maximum Consumption</option>
         <option value="Mode 2">Regulated consumption</option>
         <option value="Mode 3"> Saving</option>
       </select>
       <br>
-      <input type="text" id="defCurrent" placeholder=" Define Current">
-      <input type="text" id="def voltage" placeholder=" Define Voltage">
-      <button type="button">Changed</button>
+
     </div>
 
     <div id="box2">
     
       <h4>Select  Lighting Pattern</h4>
-      <select id="selectPattern">
+      <select id="selectPattern" onchange="updateLightingPattern()">
         <option value=0>Off</option>
         <option value=1>Constant</option>
         <option value=2>Pulses</option>
@@ -135,7 +133,7 @@
           </div>
       </div>
       <br>
-      <button type="button">Select</button>
+      
     </div>
   </div>
 
@@ -144,9 +142,9 @@
       <!-- Contenido del primer recuadro en la tercera columna -->
       <h1>INFORMATION</h1>
       <p>Current: </p>
-      <p>Voltaje:</p>
-      <p>Consumption mode:</p>
-      <p>Pattern: </p>
+      <p>Voltaje:5.0 v</p>
+      <p>Consumption mode:<span id="consumptionMode"></span></p>
+      <p>Pattern: <span id="lightingPattern"></span></p>
     </div>
 
     
