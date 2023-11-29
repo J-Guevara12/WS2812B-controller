@@ -6,14 +6,14 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 
-#define UPDATE_PERIOD 20   // Periodo de actulizacion 20 milisegundos
-#define THRESHOLD_VALUE 11300
+#define UPDATE_PERIOD 20  // Periodo de actulizacion 
+#define THRESHOLD_VALUE 300
 
 #include "display.h"
 #include "adc.h"
 
 
-static const char *TAG = "ADC"; //llamado de colas externas  
+static const char *TAG = "ADC"; 
 
 extern QueueHandle_t current_queue;  // Cola para la intensidad corriente
 
@@ -40,7 +40,7 @@ void adc_init(void){
 }
 
 
-//Tarea: Escribe valores en la cola a  utilizar
+
 void write_queue(){
     int val;
     float current;
@@ -50,18 +50,28 @@ void write_queue(){
         current = CALIBRATION_M * current + CALIBRATION_B;
         xQueueOverwrite(current_queue,&current);  // Envia el valor de la intesidad del lED a la cola
         check_threshold(val);
-        vTaskDelay(pdMS_TO_TICKS(UPDATE_PERIOD)); // Tiempo de espera para la proxima lectura
+        vTaskDelay(pdMS_TO_TICKS(UPDATE_PERIOD)); 
     }
 }
 
 
 void check_threshold(int value) {
-    if (value > THRESHOLD_VALUE) {
-        ESP_LOGI(TAG, "Threshold exceeded! Taking action...");
-         
-         show_warning_on_display();
-
-    }else{
-        clear_display();
+    float current_threshold;
+    
+    // recibir un valor de la cola current_queue
+    if (xQueueReceive(current_queue, &current_threshold, 0) == pdPASS) {
+        ESP_LOGI(TAG, "Received current threshold from queue: %f", current_threshold);
+        
+        if (current_threshold > THRESHOLD_VALUE) {
+            ESP_LOGI(TAG, "Threshold exceeded! Taking action...");
+            
+            show_warning_on_display();
+        } else {
+            
+            clear_display();
+        }
+    } else {
+        
+        ESP_LOGE(TAG, "Failed to receive current threshold from queue");
     }
 }

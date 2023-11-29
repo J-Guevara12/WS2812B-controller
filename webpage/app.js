@@ -67,6 +67,14 @@ function updateLightingPattern() {
     lightingPatternElement.textContent = selectedOption;
 }
 
+function updateVoltage() {
+   
+    var randomVoltage = (Math.random() * 0.2) + 4.8;
+    randomVoltage = randomVoltage.toFixed(2);
+    document.getElementById('voltageDisplay').innerText = 'Voltaje: ' + randomVoltage + ' V';
+  }
+  setInterval(updateVoltage, 200);
+
 
 
 
